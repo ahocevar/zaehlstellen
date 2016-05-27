@@ -71,31 +71,15 @@
 			//vectorLayer = new ol.layer.Vector({
 			//	source: new ol.source.Vector()
 			//});
-			getCoordinates(); // adds the Points of Zählstellen			
+			add_zaehlstellen(); // adds the Points of Zählstellen			
 		}
 			
-<!------ XMLHttp request to get Coordinates from JSON from GitHUB    ------------------------------------------->
-function getCoordinates(){
-	//zaehlstellen_coordinates = {};
-	var xmlhttp = new XMLHttpRequest();
-	var xml_url = "http://robertorthofer.github.io/test_coords.json";
-	xmlhttp.open("GET", xml_url, false); // not async
-	xmlhttp.send();
-		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-			//var myArr = JSON.parse(xmlhttp.responseText);
-			var zaehlstellen_coordinates = JSON.parse(xmlhttp.responseText); // global?
-			add_zaehlstellen(zaehlstellen_coordinates)
-		}	
-		else alert("XMLHttpRequest Error: ReadyState: " + xmlhttp.readyState + " Status: " + xmlhttp.status);
-}
-
-
 <!------ Zählstellenpunkte für Karte --------------------------------------------------------------------------->
-function add_zaehlstellen(coordinates)	
+function add_zaehlstellen()	
 		{		
 			ZaehlstellenPoints = new ol.layer.Vector({
 				source: new ol.source.Vector({
-					url: coordinates,
+					url: "http://robertorthofer.github.io/zaehlstellen/test_coords.json",
 					format: new ol.format.GeoJSON()
 					}),
 				style: function(feature, resolution){ 
