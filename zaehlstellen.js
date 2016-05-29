@@ -1,25 +1,39 @@
 	
-	//------------ Funktion initMap() für die Karte--------------------------------------------------------------------- -->
+//------------ Funktion initMap() für die Karte--------------------------------------------------------------------- -->
 		var map;
 		var viewpoint;
 	
-		function initMap() {	
+	function initMap() {	
 			map = new ol.Map({target: "map"});
 
-			var background = new ol.layer.Tile({
-				source: new ol.source.OSM()
+		//-------------------  Basemap  -------------------------------
+		var background = new ol.layer.Tile();
+		var xhr = new XMLHttpRequest();
+		xhr.open('GET', 'http://www.basemap.at/wmts/1.0.0/WMTSCapabilities.xml');
+		xhr.onload = function() {
+		  var caps = new ol.format.WMTSCapabilities().read(xhr.responseText);
+		  var hiDPI = ol.has.DEVICE_PIXEL_RATIO >= 1.5;
+		  var options = ol.source.WMTS.optionsFromCapabilities(caps, {
+			layer: hiDPI ? 'bmaphidpi' : 'geolandbasemap',
+			matrixSet: 'google3857',
+			requestEncoding: 'REST',
+			style: 'normal'
 			});
+		options.tilePixelRatio = hiDPI ? 2 : 1;
+		background.setSource(new ol.source.WMTS(options));
+		};
+		xhr.send();
 			
-			map.addLayer(background);
-			
-			viewpoint = new ol.View({ center: ol.proj.fromLonLat([14.82719, 47.21595]), zoom: 9 });	
-			map.setView(viewpoint);	
+		map.addLayer(background);
+		
+		viewpoint = new ol.View({ center: ol.proj.fromLonLat([14.82719, 47.21595]), zoom: 9 });	
+		map.setView(viewpoint);	
 
-			//vectorLayer = new ol.layer.Vector({
-			//	source: new ol.source.Vector()
-			//});
-			add_zaehlstellen(); // adds the Points of Zählstellen			
-		}
+		//vectorLayer = new ol.layer.Vector({
+		//	source: new ol.source.Vector()
+		//});
+		add_zaehlstellen(); // adds the Points of Zählstellen			
+	}
 			
 //---- Zählstellenpunkte für Karte --------------------------------------------------------------------------->
 function add_zaehlstellen()	
