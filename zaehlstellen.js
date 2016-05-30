@@ -209,19 +209,21 @@ function add_zaehlstellen()
 			});
 		
 		draw.on('drawend', function(e){
+				var polygonGeometry = e.feature.getGeometry();
 				var selectedFeatures = []; // Array for Point Features
 				
-				// for (i = 0; i < ZaehlstellenPoints.getSource().getFeatures().length; i++){ // for every Point (zaehlstelle)...
-					// var pointExtent = ZaehlstellenPoints.getSource().getFeatures()[i].getGeometry().getExtent();
-					// if (e.feature.getGeometry.intersectsExtend(pointExtent)){ //returns true when Polygon intersects with Extent of Point (= Point itself)
-						// selectedFeatures.push(ZaehlstellenPoints.getSource().getFeatures()[i]);
-					// }   
-				// }
+				
+				for (i = 0; i < ZaehlstellenPoints.getSource().getFeatures().length; i++){ // for every Point (zaehlstelle)...
+					var pointExtent = ZaehlstellenPoints.getSource().getFeatures()[i].getGeometry().getExtent();
+					if (polygonGeometry.intersectsExtent(pointExtent)==true){ //returns true when Polygon intersects with Extent of Point (= Point itself)
+						selectedFeatures.push(ZaehlstellenPoints.getSource().getFeatures()[i]);
+					}   
+				}
 
-				var polygonExtent = e.feature.getGeometry().getExtent();  
-				ZaehlstellenPoints.getSource().forEachFeatureIntersectingExtent(polygonExtent, function(feature) {
-					selectedFeatures.push(feature);  // Array with all selected Features	
-				}); 
+				// var polygonExtent = e.feature.getGeometry().getExtent();  
+				// ZaehlstellenPoints.getSource().forEachFeatureIntersectingExtent(polygonExtent, function(feature) {
+					// selectedFeatures.push(feature);  // Array with all selected Features	
+				// }); 
 				
 				createPolyChart(selectedFeatures);
 			});
