@@ -172,8 +172,7 @@ function add_zaehlstellen()
 	
 	
 	
-	//--------------------- Select By Polygon (copypasta) ---------------->
-
+//--------------------- Select By Polygon (copypasta) ---------------->
 	var draw; // global so we can remove it later
 	
 	function SelectByPolygon(){
@@ -198,8 +197,7 @@ function add_zaehlstellen()
 				})
 			});
 		map.addLayer(drawingLayer);	
-		
-		
+			
 		draw = new ol.interaction.Draw({
 			  source: drawingSource,
 			  type: 'Polygon'
@@ -216,9 +214,33 @@ function add_zaehlstellen()
 				ZaehlstellenPoints.getSource().forEachFeatureIntersectingExtent(polygonExtent, function(feature) {
 					selectedFeatures.push(feature);  // Array with all selected Features	
 				});
-				alert(selectedFeatures.length);
+				createPolyChart(selectedFeatures);
 			});
-			
-	
 	map.addInteraction(draw);
 	}
+	
+//------------------------ Create Charts ---------------------------->
+function createPolyChart(selectedFeatures){
+	// Get Sreet Names
+	var selectedStreetNames = [];
+	for (i = 0; i < selectedFeatures.length; i++){
+		selectedStreetNames.push(selectedFeatures[i].getProperties().zaehlstelle);  // get all streetnames (= zaehlstellen) from selection
+		//alert(selectedStreetNames[i]);
+	};
+	
+	// Get corresponding Data
+	var time = document.getElementById("time_slider").value;
+	var currentData = zaehlstellen_data[time]; // zaehlstellen-Data from all the Features at current time
+	var selectedData = [];
+	for (i = 0; i < selectedStreetNames.length; i++){
+		selectedData.push(currentData[selectedStreetNames[i]]); // Data from selected Streets
+		//alert(selectedData[i]);
+	};
+	
+	
+	
+	
+	//zaehlstellen_data is data
+	// feature.getProperties().zaehlstelle
+	//alert(selectedFeatures.length);
+	};
