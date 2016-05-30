@@ -209,11 +209,20 @@ function add_zaehlstellen()
 			});
 		
 		draw.on('drawend', function(e){
-				var selectedFeatures = [];
-				var polygonExtent = e.feature.getGeometry().getExtent();  // Extent of Polygon is Geometry, not Bounding Box
+				var selectedFeatures = []; // Array for Point Features
+				
+				// for (i = 0; i < ZaehlstellenPoints.getSource().getFeatures().length; i++){ // for every Point (zaehlstelle)...
+					// var pointExtent = ZaehlstellenPoints.getSource().getFeatures()[i].getGeometry().getExtent();
+					// if (e.feature.getGeometry.intersectsExtend(pointExtent)){ //returns true when Polygon intersects with Extent of Point (= Point itself)
+						// selectedFeatures.push(ZaehlstellenPoints.getSource().getFeatures()[i]);
+					// }   
+				// }
+
+				var polygonExtent = e.feature.getGeometry().getExtent();  
 				ZaehlstellenPoints.getSource().forEachFeatureIntersectingExtent(polygonExtent, function(feature) {
 					selectedFeatures.push(feature);  // Array with all selected Features	
-				});
+				}); 
+				
 				createPolyChart(selectedFeatures);
 			});
 	map.addInteraction(draw);
@@ -223,24 +232,52 @@ function add_zaehlstellen()
 function createPolyChart(selectedFeatures){
 	// Get Sreet Names
 	var selectedStreetNames = [];
-	for (i = 0; i < selectedFeatures.length; i++){
-		selectedStreetNames.push(selectedFeatures[i].getProperties().zaehlstelle);  // get all streetnames (= zaehlstellen) from selection
-		//alert(selectedStreetNames[i]);
-	};
+		for (i = 0; i < selectedFeatures.length; i++){
+			selectedStreetNames.push(selectedFeatures[i].getProperties().zaehlstelle);  // get all streetnames (= zaehlstellen) from selection
+			//alert(selectedStreetNames[i]);
+		};
 	
 	// Get corresponding Data
 	var time = document.getElementById("time_slider").value;
 	var currentData = zaehlstellen_data[time]; // zaehlstellen-Data from all the Features at current time
 	var selectedData = [];
-	for (i = 0; i < selectedStreetNames.length; i++){
-		selectedData.push(currentData[selectedStreetNames[i]]); // Data from selected Streets
-		//alert(selectedData[i]);
-	};
+		for (i = 0; i < selectedStreetNames.length; i++){
+			selectedData.push(currentData[selectedStreetNames[i]]); // Data from selected Streets
+			//alert(selectedData[i]);
+		};
+	
+
+	// Make Multi-Feature Chart
+	var ctx = document.getElementById("myChart");
+	var myChart = new Chart(ctx, {
+		type: 'bar',
+		data: {
+			labels: selectedStreetNames,
+			datasets: [{
+				label: 'Traffic Amount',
+				data: selectedData,
+				backgroundColor: 'rgba(75, 192, 192, 0.2)',
+				borderColor: 'rgba(75, 192, 192, 1)',
+				borderWidth: 1
+			}]
+		},
+		options: {
+			scales: {
+				yAxes: [{
+					ticks: {
+						beginAtZero:true
+					}
+				}]
+			}
+		}
+	});
+};
 	
 	
 	
 	
-	//zaehlstellen_data is data
-	// feature.getProperties().zaehlstelle
-	//alert(selectedFeatures.length);
-	};
+	
+	
+	
+	
+	
