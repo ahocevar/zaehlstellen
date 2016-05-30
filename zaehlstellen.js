@@ -206,8 +206,17 @@ function add_zaehlstellen()
 			  //geometryFunction: geometryFunction,  //Function that is called when a geometry's coordinates are updated.
 			});
 				
-		draw.on('drawstart', function (e) {
+		draw.on('drawstart', function(e) {
 			drawingSource.clear();
+			});
+		
+		draw.on('drawend', function(e){
+				var selectedFeatures = [];
+				var polygonExtent = e.feature.getGeometry().getExtent();  // Extent of Polygon is Geometry, not Bounding Box
+				ZaehlstellenPoints.getSource().forEachFeatureIntersectingExtent(polygonExtent, function(feature) {
+					selectedFeatures.push(feature);  // Array with all selected Features	
+				});
+				alert(selectedFeatures.length);
 			});
 			
 	
