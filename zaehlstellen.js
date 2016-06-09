@@ -66,15 +66,19 @@ function add_zaehlstellen()
 		ZaehlstellenPoints.setStyle(function(feature, resolution){
 		var geom = feature.getGeometry().getType();  // geom = point
 		var zaehlstelle = feature.values_.zaehlstelle;  // zaehlstelle = z.B. b0251
-		var amount = zaehlstellen_data[y][zaehlstelle]; // amount = z.B. 1055
 		
-		var color_hue = 110 - Math.round((amount/max_amount)*110) // 110 = green, 0 = red, yellow = yellow
+		var amount = zaehlstellen_data[y][zaehlstelle]; // amount = z.B. 1055
+		//example: min_max_zaehlstelle["b02501"][1] = maximum of b02501
+		
+		var color_hue = 110 - Math.round((amount/min_max_zaehlstelle[zaehlstelle][1])*110) // 110 = green, 0 = red, between = yellow
 		var feature_color = 'hsl('+ color_hue +', 99%, 99%)';
+		
+		var radius_size = (Math.round((amount/min_max_zaehlstelle[zaehlstelle][1]))+1)*10;  
 		
 		var styles = {
 			'Point': [new ol.style.Style({
 			image: new ol.style.Circle({
-			radius: 15,
+			radius: radius_size,
 			fill: new ol.style.Fill({color: 'hsl('+color_hue+', 100%, 50%)'}),
 			stroke: new ol.style.Stroke({color: 'hsl('+color_hue+', 100%, 20%)', width: 3})
 			})
@@ -141,18 +145,25 @@ function add_zaehlstellen()
 	}
 	//---------- Find min and max Data Values for Visualization ---------->
 	function find_dataRange(data){
-		min_amount = Infinity;
-		max_amount = -Infinity;
 		
-		for (i = 1; i < data.length; i++) {  // loops through dates (i=0 would be streetname)
-			var arr = Object.keys( data[i] ).map(function ( key ) { return data[i][key]; });  // creates array of Values
-			arr.shift(); // removes first item of arr, which is name of Column (string)
-			var min_temp = Math.min.apply( null, arr );  // min and max of current date
-			var max_temp = Math.max.apply( null, arr );
+		min_max_zaehlstelle ={};
+		//k = 0; // first zaehlstelle
+		for (k = 1; k < Object.keys(data[0]).length; k++){  // name of zaehlstelle 
+			var name_zaehlstelle = Object.keys(zaehlstellen_data[0])[k];
+			var min_max = [Infinity, -Infinity];
 			
-			if (min_temp < min_amount) {min_amount = min_temp}; 
-			if (max_temp > max_amount) {max_amount = max_temp};
+			//min_max_zaehlstelle[name_zaehlstelle]["min"] = Infinity;
+			//min_max_zaehlstelle[name_zaehlstelle]["max"] = -Infinity;
+			for (i = 1; i < data.length; i++){  // also via keys? // value of zaehlstelle at certain date
+				var amount = data[i][name_zaehlstelle];
+				
+				if (amount < min_max[0]) {min_max[0] = amount}; 
+				if (amount > min_max[1]) {min_max[1] = amount};
+				
+			}
+			min_max_zaehlstelle[name_zaehlstelle] = min_max; // assign min/max-Values to Object
 		}
+		
 		updateInput(0); // initiate timeslider to first day of data 
 		document.getElementById("time_slider").value = 0;
 	}
