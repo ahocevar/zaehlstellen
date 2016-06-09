@@ -15,14 +15,14 @@
 		float: left;
 	}	
   
-  #menu {
+	#menu {
 		float: right; 
 		width: 25%;
 		align: center;
 		text-align: center;
-  }
+	}
   
-  #drop_zone{
+	#drop_zone{
 		height: 70px;
 		line-height: 70px;
 		margin: 10px;
@@ -30,4 +30,13 @@
 		border-style: dashed;
 		border-color: #222222;
 
-  }
+	}
+  
+	#canvas_div{
+		height: 100%;
+		width: 90%;
+	}
+	
+	#myChart{
+		height: 100%;
+	}

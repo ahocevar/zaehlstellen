@@ -250,8 +250,16 @@ function createPolyChart(selectedFeatures){
 	
 
 	// Make Multi-Feature Chart
+
+	// clearing old Charts (ugly but only thing that worked)
+	document.getElementById("myChart").remove();
+	var canv = document.createElement("canvas");
+	canv.id = 'myChart';	
+	canv.style.height ="350px"; // not working
+	document.getElementById("canvas_div").appendChild(canv);
+	
 	var ctx = document.getElementById("myChart");
-	var myChart = new Chart(ctx, {
+		myChart = new Chart(ctx, {  // global, unsauber?
 		type: 'bar',
 		data: {
 			labels: selectedStreetNames,
