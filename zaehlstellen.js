@@ -179,6 +179,7 @@ function add_zaehlstellen()
 		var currentDate = zaehlstellen_data[val].datum;
 		document.getElementById('currentDate').innerHTML=currentDate; 
 		updateStyle(val);
+		if (typeof selectedFeatures !== "undefined"  && selectedFeatures.length > 0){createPolyChart(selectedFeatures)}
 	}
 	
 	
@@ -221,7 +222,7 @@ function add_zaehlstellen()
 		
 		draw.on('drawend', function(e){
 				var polygonGeometry = e.feature.getGeometry();
-				var selectedFeatures = []; // Array for Point Features
+				selectedFeatures = []; // Array for Point Features  // global because used when timeslider changes, not safe?
 				
 				
 				for (i = 0; i < ZaehlstellenPoints.getSource().getFeatures().length; i++){ // for every Point (zaehlstelle)...
@@ -263,35 +264,40 @@ function createPolyChart(selectedFeatures){
 	// Make Multi-Feature Chart
 
 	// clearing old Charts (ugly but only thing that worked)
-	document.getElementById("myChart").remove();
-	var canv = document.createElement("canvas");
-	canv.id = 'myChart';	
-	canv.style.height ="350px"; // not working
-	document.getElementById("canvas_div").appendChild(canv);
+	if (!document.getElementById("myChart")) {document.getElementById("myChart").remove()};
+		
 	
-	var ctx = document.getElementById("myChart");
-		myChart = new Chart(ctx, {  // global, unsauber?
-		type: 'bar',
-		data: {
-			labels: selectedStreetNames,
-			datasets: [{
-				label: 'Traffic Amount',
-				data: selectedData,
-				backgroundColor: 'rgba(75, 192, 192, 0.2)',
-				borderColor: 'rgba(75, 192, 192, 1)',
-				borderWidth: 1
-			}]
-		},
-		options: {
-			scales: {
-				yAxes: [{
-					ticks: {
-						beginAtZero:true
-					}
+	if (typeof selectedFeatures !== "undefined"  && selectedFeatures.length > 0){
+		var canv = document.createElement("canvas");
+		canv.id = 'myChart';	
+		canv.style.height ="350px"; // not working
+		document.getElementById("canvas_div").appendChild(canv);
+	
+	
+		var ctx = document.getElementById("myChart");
+			myChart = new Chart(ctx, {  // global, unsauber?
+			type: 'bar',
+			data: {
+				labels: selectedStreetNames,
+				datasets: [{
+					label: 'Traffic Amount',
+					data: selectedData,
+					backgroundColor: 'rgba(75, 192, 192, 0.2)',
+					borderColor: 'rgba(75, 192, 192, 1)',
+					borderWidth: 1
 				}]
+			},
+			options: {
+				scales: {
+					yAxes: [{
+						ticks: {
+							beginAtZero:true
+						}
+					}]
+				}
 			}
-		}
-	});
+		});
+	}
 };
 	
 	
