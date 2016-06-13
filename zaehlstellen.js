@@ -117,6 +117,7 @@ function add_zaehlstellen()
 		reader.onload = function(event){  // Reader ist asynchron, wenn reader mit operation fertig ist, soll das hier (JSON.parse) ausgeführt werden, sonst ist es noch 
 			null				
 			zaehlstellen_data = JSON.parse(reader.result);  // global, unsauber?
+			makeDateObjects(zaehlstellen_data);
 			init_timeslider(zaehlstellen_data);
 			find_dataRange(zaehlstellen_data);
 		};
@@ -165,6 +166,18 @@ function add_zaehlstellen()
 		updateInput(0); // initiate timeslider to first day of data 
 		document.getElementById("time_slider").value = 0;
 	}
+	//--------- Parse Date-Strings into JS Date Objects -------------------->
+	function makeDateObjects(data){
+		for (i = 0; i < data.length; i++){
+			var datestring = data[i].datum	
+			var thisYear   = parseInt(datestring.substring(0,4));
+			var thisMonth  = parseInt(datestring.substring(5,7));
+			var thisDay   = parseInt(datestring.substring(8,10));
+			var thisDate = new Date(thisYear, thisMonth-1, thisDay);  // JS-Date Month begins at 0
+			zaehlstellen_data[i].datum = thisDate;
+		}	
+		
+	}
 	
 	//---- Update des Timeslider  ----------------->
 	// Set max of Timeslider -->
@@ -172,10 +185,45 @@ function add_zaehlstellen()
 	function changeRange(dataRange) {
 		document.getElementById("time_slider").setAttribute("max", dataRange);
 	}
+	
 	//  Update of Shown Value   -->
 	function updateInput(val) {
-		var currentDate = zaehlstellen_data[val].datum;
-		document.getElementById('currentDate').innerHTML=currentDate; 
+		//var currentDate = zaehlstellen_data[val].datum;
+		//document.getElementById('currentDate').innerHTML=currentDate; 
+		// Create Arrays for Printing the Date
+		var d_names = new Array("Sunday", "Monday", "Tuesday",
+		"Wednesday", "Thursday", "Friday", "Saturday");
+
+		var m_names = new Array("January", "February", "March", 
+		"April", "May", "June", "July", "August", "September", 
+		"October", "November", "December");
+
+		var d = zaehlstellen_data[val].datum;
+		var curr_day = d.getDay();
+		var curr_date = d.getDate();
+		var sup = "";
+		if (curr_date == 1 || curr_date == 21 || curr_date ==31)
+		   {
+		   sup = "st";
+		   }
+		else if (curr_date == 2 || curr_date == 22)
+		   {
+		   sup = "nd";
+		   }
+		else if (curr_date == 3 || curr_date == 23)
+		   {
+		   sup = "rd";
+		   }
+		else
+		   {
+		   sup = "th";
+		   }
+		var curr_month = d.getMonth();
+		var curr_year = d.getFullYear();
+		var shownDate = d_names[curr_day] + ", "+ m_names[curr_month] + " " + curr_date + "<SUP>" + sup + "</SUP>" + ", "  + curr_year;
+		
+		document.getElementById('currentDate').innerHTML = shownDate; 		
+		
 		updateStyle(val);
 		if (typeof selectedFeatures !== "undefined"  && selectedFeatures.length > 0){createPolyChart(selectedFeatures)}
 	}
