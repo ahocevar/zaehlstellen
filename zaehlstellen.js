@@ -144,8 +144,7 @@ function add_zaehlstellen()
 		updateInput(y);
 	}
 	//---------- Find min and max Data Values for Visualization ---------->
-	function find_dataRange(data){
-		
+	function find_dataRange(data){	
 		min_max_zaehlstelle ={};
 		//k = 0; // first zaehlstelle
 		for (k = 1; k < Object.keys(data[0]).length; k++){  // name of zaehlstelle 
@@ -162,8 +161,7 @@ function add_zaehlstellen()
 				
 			}
 			min_max_zaehlstelle[name_zaehlstelle] = min_max; // assign min/max-Values to Object
-		}
-		
+		}	
 		updateInput(0); // initiate timeslider to first day of data 
 		document.getElementById("time_slider").value = 0;
 	}
@@ -262,18 +260,26 @@ function createPolyChart(selectedFeatures){
 	
 
 	// Make Multi-Feature Chart
-
-	// clearing old Charts (ugly but only thing that worked)
-	if (!document.getElementById("myChart")) {document.getElementById("myChart").remove()};
-		
+	// Destroy existing Chart if number of selected Elements differs
+	var chartDestroyed = false;
+	if (myChart.id !== "myChart" && selectedFeatures.length != myChart.data.datasets[0].data.length){
+		//alert("destroy Chart")
+		myChart.destroy();
+		chartDestroyed = true;
+		}
 	
-	if (typeof selectedFeatures !== "undefined"  && selectedFeatures.length > 0){
-		var canv = document.createElement("canvas");
-		canv.id = 'myChart';	
-		canv.style.height ="350px"; // not working
-		document.getElementById("canvas_div").appendChild(canv);
+	// if Chart already exists, update it with new values and labels (e.g. only time changed)
+	if (myChart.id !== "myChart" && chartDestroyed == false && selectedFeatures.length > 0){
+		//alert ("update");
+		myChart.labels = selectedStreetNames;
+		myChart.data.datasets[0].data = selectedData;
+		myChart.update();
+		myChart.render();
+		myChart.resize();
+	}
 	
-	
+	else if (selectedFeatures.length > 0){	 // If Chart didnt exist before...
+		//alert ("first chart");
 		var ctx = document.getElementById("myChart");
 			myChart = new Chart(ctx, {  // global, unsauber?
 			type: 'bar',
@@ -288,6 +294,7 @@ function createPolyChart(selectedFeatures){
 				}]
 			},
 			options: {
+				//animation : false,
 				scales: {
 					yAxes: [{
 						ticks: {
@@ -298,6 +305,7 @@ function createPolyChart(selectedFeatures){
 			}
 		});
 	}
+	
 };
 	
 	
