@@ -24,9 +24,18 @@
 		<div id="drop_zone">Drop Zaehlstellen JSON</div>
 		<output id="list"></output>
 		<div id ="sliderDiv" style="display: none"> <!-- invisible at first -->
-			<button type="button" onclick="changeDateOneStep(-1)"> &larr; </button>  <!-- Button 1 step left -->
-			<input type="range" id="time_slider" name="rangeInput" min="0" onchange="updateInput(this.value);" oninput="updateInput(this.value);" style="width: 70%"> 
-			<button type="button" onclick="changeDateOneStep(1)"> &rarr; </button> <!-- Button 1 step right -->
+			<div id="weekday_div">
+				<label class="input-check checked"><input onchange="change_state(this)" type="checkbox" value="1" id="monday" name="weekday"/> Mon </label>
+				<label class="input-check checked"><input onchange="change_state(this)" type="checkbox" value="2" name="weekday"/> Tue </label>
+				<label class="input-check checked"><input onchange="change_state(this)" type="checkbox" value="3" name="weekday"/> Wed </label>
+				<label class="input-check checked"><input onchange="change_state(this)" type="checkbox" value="4" name="weekday"/> Thu </label>
+				<label class="input-check checked"><input onchange="change_state(this)" type="checkbox" value="5" name="weekday"/> Fri </label>
+				<label class="input-check checked"><input onchange="change_state(this)" type="checkbox" value="6" name="weekday"/> Sat </label>
+				<label class="input-check checked"><input onchange="change_state(this)" type="checkbox" value="0" name="weekday"/> Sun </label>
+			</div>
+			<button type="button" class="timeslider_button" onclick="changeDateOneStep(-1)"> &larr; </button>  <!-- Button 1 step left -->
+			<input type="range" id="time_slider" name="rangeInput" min="0" onchange="updateInput(this.value);" oninput="updateInput(this.value);"> 
+			<button type="button" class="timeslider_button" onclick="changeDateOneStep(1)"> &rarr; </button> <!-- Button 1 step right -->
 			<p id="currentDate"> </p>
 			<button type="button" onclick="SelectByPolygon()" class="polygonButton"> Select by Polygon </button>
 			<div id="canvas_div">

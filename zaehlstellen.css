@@ -21,6 +21,15 @@
 		align: center;
 		text-align: center;
 	}
+	
+	#time_slider{
+		width: 60%;
+	}
+	
+	.timeslider_button{
+		width: 10%;
+		display: inline-block;
+	}
   
 	#drop_zone{
 		height: 70px;
@@ -40,3 +49,27 @@
 	#myChart{
 		height: 100%;
 	}
+	
+	#weekday_div {
+		margin-top: 30px;
+	margin-bottom: 15px;	
+	}
+/* Checkoboxes for selecting Weekday */	
+	.input-check{
+        display:inline-block;
+        height:20px;
+        padding:0px 0px;
+        background:#A4C4E8;
+        width:12%;
+        color:white
+    }
+    /* This is the style for a checked "button" */
+    .input-check.checked{
+        background:#4A74AA;
+        color:white;
+        font-weight:bold
+    }
+    /* Hide the checkbox */
+    .input-check input{
+        display:none
+    }

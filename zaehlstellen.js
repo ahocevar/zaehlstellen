@@ -35,6 +35,7 @@
 	add_zaehlstellen(); // adds the Points of Zählstellen			
 	}
 
+
 //---- Zählstellenpunkte für Karte --------------------------------------------------------------------------->
 function add_zaehlstellen()	
 {		
@@ -178,7 +179,23 @@ function add_zaehlstellen()
 		}	
 		
 	}
-	
+//-------- Function for Checkboxes of Weekday-Selection (visuals) ------------>
+function change_state(obj){
+        if (obj.checked){
+            //if checkbox is being checked, add a "checked" class
+            obj.parentNode.classList.add("checked");
+        }
+        else{
+            //else remove it
+            obj.parentNode.classList.remove("checked");
+        }
+		// update with new selected weekdays
+		selectedWeekdays = [];
+		for (i = 0; i < document.getElementsByClassName("input-check checked").length; i++){
+			selectedWeekdays.push(parseInt(document.getElementsByClassName("input-check checked")[i].childNodes[0].value));
+		}
+    }
+
 	//---- Update des Timeslider  ----------------->
 	// Set max of Timeslider -->
 	
@@ -336,8 +353,8 @@ function createPolyChart(selectedFeatures){
 				datasets: [{
 					label: 'Traffic Amount',
 					data: selectedData,
-					backgroundColor: 'rgba(75, 192, 192, 0.2)',
-					borderColor: 'rgba(75, 192, 192, 1)',
+					backgroundColor: 'rgba(164, 196, 232, 0.7)',
+					borderColor: 'rgba(	74, 116, 170, 0.7)',
 					borderWidth: 1
 				}]
 			},
