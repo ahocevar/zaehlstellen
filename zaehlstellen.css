@@ -4,6 +4,7 @@
 		width: 100%; 
 		margin: 0; 
 		background-color: #ffffff;
+		font-family: Verdana, Geneva, sans-serif;
 	}
 
 	.map {
@@ -52,22 +53,36 @@
 	
 	#weekday_div {
 		margin-top: 30px;
-	margin-bottom: 15px;	
+		margin-bottom: 15px;	
 	}
 /* Checkoboxes for selecting Weekday */	
 	.input-check{
         display:inline-block;
         height:20px;
-        padding:0px 0px;
+		padding-top: 3px;
+		padding-bottom: 3px;
         background:#A4C4E8;
         width:12%;
-        color:white
+        color:white;
+		font-size: 14px;
+		/* Make Text Unselectable */
+		-webkit-user-select: none; /* Chrome/Safari */        
+		-moz-user-select: none; /* Firefox */
+		-ms-user-select: none; /* IE10+ */
     }
     /* This is the style for a checked "button" */
     .input-check.checked{
+		display:inline-block;
         background:#4A74AA;
         color:white;
-        font-weight:bold
+        font-weight:bold;
+		padding-top: 3px;
+		padding-bottom: 3px;
+		font-size: 14px;
+		/* Make Text Unselectable */
+		-webkit-user-select: none; /* Chrome/Safari */        
+		-moz-user-select: none; /* Firefox */
+		-ms-user-select: none; /* IE10+ */
     }
     /* Hide the checkbox */
     .input-check input{

@@ -115,10 +115,10 @@ function add_zaehlstellen()
 		f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a','</li>');
 		
 		var reader = new FileReader(); // to read the FileList object
-		reader.onload = function(event){  // Reader ist asynchron, wenn reader mit operation fertig ist, soll das hier (JSON.parse) ausgeführt werden, sonst ist es noch 
-			null				
+		reader.onload = function(event){  // Reader ist asynchron, wenn reader mit operation fertig ist, soll das hier (JSON.parse) ausgeführt werden, sonst ist es noch null				
 			zaehlstellen_data = JSON.parse(reader.result);  // global, unsauber?
-			makeDateObjects(zaehlstellen_data);
+			makeDateObjects(zaehlstellen_data);	
+			selectedWeekdays = [0,1,2,3,4,5,6]; // select all weekdays before timeslider gets initialized
 			init_timeslider(zaehlstellen_data);
 			find_dataRange(zaehlstellen_data);
 		};
@@ -141,9 +141,9 @@ function add_zaehlstellen()
 	//---------- Button one step left/right ---------->
 	function changeDateOneStep(step){    // takes -1 or 1 from left/right-Buttons and updates the current Date
 		var x = document.getElementById("time_slider").value;
-		var y = parseInt(x) + parseInt(step);
-		document.getElementById("time_slider").value = y;
-		updateInput(y);
+		var thisDate = parseInt(x) + parseInt(step); // thisDate = integer of Timestep (e.g. 0 = first Date in Data)
+		var goLeft = (step == -1) ? true : false;
+		updateInput(thisDate, goLeft);
 	}
 	//---------- Find min and max Data Values for Visualization ---------->
 	function find_dataRange(data){	
@@ -164,8 +164,8 @@ function add_zaehlstellen()
 			}
 			min_max_zaehlstelle[name_zaehlstelle] = min_max; // assign min/max-Values to Object
 		}	
-		updateInput(0); // initiate timeslider to first day of data 
-		document.getElementById("time_slider").value = 0;
+		updateInput(0, false); // initiate timeslider to first day of data 
+		//document.getElementById("time_slider").value = 0;
 	}
 	//--------- Parse Date-Strings into JS Date Objects -------------------->
 	function makeDateObjects(data){
@@ -176,8 +176,8 @@ function add_zaehlstellen()
 			var thisDay   = parseInt(datestring.substring(8,10));
 			var thisDate = new Date(thisYear, thisMonth-1, thisDay);  // JS-Date Month begins at 0
 			zaehlstellen_data[i].datum = thisDate;
-		}	
-		
+			zaehlstellen_data[i].selected_weekday = true; // Create Property Selected Weekday, always True when newData
+		}		
 	}
 //-------- Function for Checkboxes of Weekday-Selection (visuals) ------------>
 function change_state(obj){
@@ -189,7 +189,7 @@ function change_state(obj){
             //else remove it
             obj.parentNode.classList.remove("checked");
         }
-		// update with new selected weekdays
+		// update weekday-selection with new selected weekdays
 		selectedWeekdays = [];
 		for (i = 0; i < document.getElementsByClassName("input-check checked").length; i++){
 			selectedWeekdays.push(parseInt(document.getElementsByClassName("input-check checked")[i].childNodes[0].value));
@@ -204,8 +204,8 @@ function change_state(obj){
 	}
 	
 	//  Update of Shown Value   -->
-	function updateInput(val) {
-		//var currentDate = zaehlstellen_data[val].datum;
+	function updateInput(thisDate, goLeft) {
+		//var currentDate = zaehlstellen_data[thisDate].datum;
 		//document.getElementById('currentDate').innerHTML=currentDate; 
 		// Create Arrays for Printing the Date
 		var d_names = new Array("Sunday", "Monday", "Tuesday",
@@ -215,34 +215,55 @@ function change_state(obj){
 		"April", "May", "June", "July", "August", "September", 
 		"October", "November", "December");
 
-		var d = zaehlstellen_data[val].datum;
-		var curr_day = d.getDay();
-		var curr_date = d.getDate();
-		var sup = "";
-		if (curr_date == 1 || curr_date == 21 || curr_date ==31)
-		   {
-		   sup = "st";
-		   }
-		else if (curr_date == 2 || curr_date == 22)
-		   {
-		   sup = "nd";
-		   }
-		else if (curr_date == 3 || curr_date == 23)
-		   {
-		   sup = "rd";
-		   }
-		else
-		   {
-		   sup = "th";
-		   }
-		var curr_month = d.getMonth();
-		var curr_year = d.getFullYear();
-		var shownDate = d_names[curr_day] + ", "+ m_names[curr_month] + " " + curr_date + "<SUP>" + sup + "</SUP>" + ", "  + curr_year;
-		
-		document.getElementById('currentDate').innerHTML = shownDate; 		
-		
-		updateStyle(val);
+		//var d = zaehlstellen_data[thisDate].datum;
+		//check if day of week is selected
+		var foundNextWeekday = false;
+		// repeat until selected weekday is found
+		while (foundNextWeekday == false){
+			var d = zaehlstellen_data[thisDate].datum;
+			//alert (d.getDay());
+			if (typeof(selectedWeekdays) != "undefined" && selectedWeekdays.indexOf(d.getDay()) >= 0){
+				var curr_day = d.getDay();
+				var curr_date = d.getDate();
+				var sup = "";
+				if (curr_date == 1 || curr_date == 21 || curr_date ==31)
+				   {
+				   sup = "st";
+				   }
+				else if (curr_date == 2 || curr_date == 22)
+				   {
+				   sup = "nd";
+				   }
+				else if (curr_date == 3 || curr_date == 23)
+				   {
+				   sup = "rd";
+				   }
+				else
+				   {
+				   sup = "th";
+				   }
+				var curr_month = d.getMonth();
+				var curr_year = d.getFullYear();
+				var shownDate = d_names[curr_day] + ", "+ m_names[curr_month] + " " + curr_date + "<SUP>" + sup + "</SUP>" + ", "  + curr_year;
+				
+				document.getElementById('currentDate').innerHTML = shownDate; 		
+				
+				updateStyle(thisDate);
+				foundNextWeekday = true;
+			}
+			else if (selectedWeekdays.length == 0){ 
+				alert("No Weekday Selected");
+				break;
+				foundNextWeekday = true;
+				} // Break while when end of Data is reached
+			else{
+				//alert(thisDate)
+				thisDate = (goLeft == true) ? thisDate-1 : thisDate+1;
+			}
+		}
 		if (typeof selectedFeatures !== "undefined"  && selectedFeatures.length > 0){createPolyChart(selectedFeatures)}
+		
+		document.getElementById("time_slider").value = thisDate; // Update of Timeslider
 	}
 	
 	
