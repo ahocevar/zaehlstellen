@@ -34,7 +34,7 @@
 				<label class="input-check checked"><input onclick="change_state(this)" type="checkbox" value="0" name="weekday"/> Sun </label>
 			</div>
 			<button type="button" class="timeslider_button" onclick="changeDateOneStep(-1)"> &larr; </button>  <!-- Button 1 step left -->
-			<input type="range" id="time_slider" name="rangeInput" min="0" onchange="updateInput(this.value);" oninput="updateInput(this.value);"> 
+			<input type="range" id="time_slider" name="rangeInput" min="0" onchange="updateInput(this.value, false);" oninput="updateInput(this.value, false);"> 
 			<button type="button" class="timeslider_button" onclick="changeDateOneStep(1)"> &rarr; </button> <!-- Button 1 step right -->
 			<p id="currentDate"> </p>
 			<button type="button" onclick="SelectByPolygon()" class="polygonButton"> Select by Polygon </button>

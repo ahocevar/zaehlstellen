@@ -176,7 +176,7 @@ function add_zaehlstellen()
 			var thisDay   = parseInt(datestring.substring(8,10));
 			var thisDate = new Date(thisYear, thisMonth-1, thisDay);  // JS-Date Month begins at 0
 			zaehlstellen_data[i].datum = thisDate;
-			zaehlstellen_data[i].selected_weekday = true; // Create Property Selected Weekday, always True when newData
+			//zaehlstellen_data[i].selected_weekday = true; // Create Property Selected Weekday, always True when newData ()
 		}		
 	}
 //-------- Function for Checkboxes of Weekday-Selection (visuals) ------------>
@@ -220,8 +220,8 @@ function change_state(obj){
 		var foundNextWeekday = false;
 		// repeat until selected weekday is found
 		while (foundNextWeekday == false){
+			thisDate = parseInt(thisDate);
 			var d = zaehlstellen_data[thisDate].datum;
-			//alert (d.getDay());
 			if (typeof(selectedWeekdays) != "undefined" && selectedWeekdays.indexOf(d.getDay()) >= 0){
 				var curr_day = d.getDay();
 				var curr_date = d.getDate();
