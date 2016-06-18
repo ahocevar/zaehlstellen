@@ -37,11 +37,18 @@
 			<input type="range" id="time_slider" name="rangeInput" min="0" onchange="updateInput(this.value, false);" oninput="updateInput(this.value, false);"> 
 			<button type="button" class="timeslider_button" onclick="changeDateOneStep(1)"> &rarr; </button> <!-- Button 1 step right -->
 			<p id="currentDate"> </p>
-			<button type="button" onclick="SelectByPolygon()" class="polygonButton"> Select by Polygon </button>
+			<button type="button" onclick="SelectByPolygon()" class="cameraButton"> Select by Polygon </button>
 			<div id="canvas_div">
 				<canvas id="myChart"></canvas>
+				<button type="button" class="snapshot_button" onclick="snapshot()"> &#128247; </button>
+				<div id="snapshot_div" style="visibility: hidden;"> <!-- div for table of Snapshots -->
+					<table id="snapshot_table" border="1" style="width:90%">
+
+					<table>  
+				</div>
+				<button type="button" class="delete_snapshot_button" onclick="deleteSnapshots()"> Delete Snapshots </button>
 			</div>
-			
+				
 		<!--<button type="button"  class="polygonButton"> Select Measuring Site </button> -->
 		</div>
 	</div>

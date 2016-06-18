@@ -174,8 +174,8 @@ function add_zaehlstellen()
 			var thisYear   = parseInt(datestring.substring(0,4));
 			var thisMonth  = parseInt(datestring.substring(5,7));
 			var thisDay   = parseInt(datestring.substring(8,10));
-			var thisDate = new Date(thisYear, thisMonth-1, thisDay);  // JS-Date Month begins at 0
-			zaehlstellen_data[i].datum = thisDate;
+			var thisDateComplete = new Date(thisYear, thisMonth-1, thisDay);  // JS-Date Month begins at 0
+			zaehlstellen_data[i].datum = thisDateComplete;
 			//zaehlstellen_data[i].selected_weekday = true; // Create Property Selected Weekday, always True when newData ()
 		}		
 	}
@@ -393,7 +393,62 @@ function createPolyChart(selectedFeatures){
 	}
 	
 };
+
+// ---------------------------------------- Snapshot function --------------------------------------------------------------
+function snapshot(){
+	// create empty snapshot array
+	if (typeof(snapshotArray) == "undefined"){
+			snapshotArray = [];
+	};  
 	
+	// create array with parameters of this snapshot
+	var thisSnapshot = [];
+	thisSnapshot[0] = parseInt(document.getElementById("time_slider").value); // Save Current date
+	thisSnapshot[1] = selectedFeatures; // Save Current Selected Features
+	snapshotArray.push(thisSnapshot);	
+	
+	// append row to the HTML table
+	var tbl = document.getElementById('snapshot_table') // table reference
+    var row = tbl.insertRow(tbl.rows.length)      // append table row
+    var eyeButtonCell = row.insertCell(0);
+	var snapshotNameCell = row.insertCell(1);
+	//var deleteRowButtonCell = row.insertCell(2);
+	
+	// create button with value of index of array (of this snapshot)
+	var btn = document.createElement('input');
+	btn.type = "button";
+	btn.className = "eyeButton";
+	btn.value = "Show";
+	btn.setAttribute('snapshotIndex', tbl.rows.length);
+	btn.onclick = function () {showSnapshot(this.getAttribute('snapshotIndex')-1);};
+	//td.appendChild(btn);
+	
+	eyeButtonCell.appendChild(btn);
+	snapshotNameCell.innerHTML = "Snapshot " + tbl.rows.length;
+	//deleteRowButtonCell.innerHTML = "Delete Snapshot";
+	
+	document.getElementById("snapshot_div").style.visibility='visible';
+	
+};
+
+function showSnapshot(snapshotIndex){
+	//console.log ("show Snapshot Number " + snapshotIndex);	
+	updateInput(snapshotArray[snapshotIndex][0], false);
+	createPolyChart(snapshotArray[snapshotIndex][1]);	
+};
+
+function deleteSnapshots(){
+	var tbl = document.getElementById('snapshot_table'), // table reference
+        lastRow = tbl.rows.length - 1,             // set the last row index
+        i;
+    // delete rows with index greater then 0
+    for (i = lastRow; i >= 0; i--) {
+        tbl.deleteRow(i);
+    }
+document.getElementById("snapshot_div").style.visibility = "hidden";
+}
+
+
 	
 	
 	
