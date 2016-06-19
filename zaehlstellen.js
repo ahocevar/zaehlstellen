@@ -278,16 +278,16 @@ function change_state(obj){
 				source: drawingSource,
 				style: new ol.style.Style({
 				fill: new ol.style.Fill({
-					  color: 'rgba(150, 255, 150, 0.2)'
+					  color: 'rgba(191, 214, 239, 0.4)'
 					}),
 					stroke: new ol.style.Stroke({
-					  color: '#006600',
+					  color: '#4A74AA',
 					  width: 2
 					}),
 					image: new ol.style.Circle({
 					  radius: 70,
 					  fill: new ol.style.Fill({
-						color: '#ffcc33'
+						color: '#000000'
 					  })
 					})
 				})
@@ -354,6 +354,7 @@ function createPolyChart(selectedFeatures){
 		chartDestroyed = true;
 		}
 	
+	
 	// if Chart already exists, update it with new values and labels (e.g. only time changed)
 	if (myChart.id !== "myChart" && chartDestroyed == false && selectedFeatures.length > 0){
 		//alert ("update");
@@ -391,7 +392,10 @@ function createPolyChart(selectedFeatures){
 			}
 		});
 	}
-	
+	// make div visible if something is in it
+	if (selectedFeatures.length > 0 || (typeof(snapshotArray) != "undefined" && snapshotArray.length >0)){
+		document.getElementById("canvas_div").style.visibility = 'visible';
+	}
 };
 
 // ---------------------------------------- Snapshot function --------------------------------------------------------------
@@ -411,20 +415,23 @@ function snapshot(){
 	var tbl = document.getElementById('snapshot_table') // table reference
     var row = tbl.insertRow(tbl.rows.length)      // append table row
     var eyeButtonCell = row.insertCell(0);
-	var snapshotNameCell = row.insertCell(1);
+	//var snapshotNameCell = row.insertCell(1);
 	//var deleteRowButtonCell = row.insertCell(2);
 	
+	var buttonText = "Snapshot " + tbl.rows.length;
 	// create button with value of index of array (of this snapshot)
 	var btn = document.createElement('input');
 	btn.type = "button";
-	btn.className = "eyeButton";
-	btn.value = "Show";
+	btn.className = "other_button";
+	btn.setAttribute("id", "showSnapshot");
+	btn.value = buttonText;
 	btn.setAttribute('snapshotIndex', tbl.rows.length);
 	btn.onclick = function () {showSnapshot(this.getAttribute('snapshotIndex')-1);};
+ 
 	//td.appendChild(btn);
 	
-	eyeButtonCell.appendChild(btn);
-	snapshotNameCell.innerHTML = "Snapshot " + tbl.rows.length;
+	eyeButtonCell.appendChild(btn); 
+	//snapshotNameCell.innerHTML = "Snapshot " + tbl.rows.length;
 	//deleteRowButtonCell.innerHTML = "Delete Snapshot";
 	
 	document.getElementById("snapshot_div").style.visibility='visible';
