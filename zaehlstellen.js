@@ -332,7 +332,6 @@ function createPolyChart(selectedFeatures){
 	var selectedStreetNames = [];
 		for (i = 0; i < selectedFeatures.length; i++){
 			selectedStreetNames.push(selectedFeatures[i].getProperties().zaehlstelle);  // get all streetnames (= zaehlstellen) from selection
-			//alert(selectedStreetNames[i]);
 		};
 	
 	// Get corresponding Data
@@ -341,8 +340,17 @@ function createPolyChart(selectedFeatures){
 	var selectedData = [];
 		for (i = 0; i < selectedStreetNames.length; i++){
 			selectedData.push(currentData[selectedStreetNames[i]]); // Data from selected Streets
-			//alert(selectedData[i]);
 		};
+		
+	// get maximum of selected features at all times (to set maximum of scale)
+	var dataMax = 0;
+	//var keys = Object.keys(min_max_zaehlstelle);
+	//alert (keys);
+	for (var i = 0; i < selectedStreetNames.length; i++) {
+		if (min_max_zaehlstelle[selectedStreetNames[i]][1] > dataMax){dataMax = min_max_zaehlstelle[selectedStreetNames[i]][1];}; // if maximum value of selected zaehlstelle is bigger than current maximum value, replace it
+	}
+	dataMax = Math.ceil(dataMax/1000)*1000; // round up to next 1000
+	
 	
 
 	// Make Multi-Feature Chart
@@ -385,6 +393,8 @@ function createPolyChart(selectedFeatures){
 				scales: {
 					yAxes: [{
 						ticks: {
+							min: 0,
+							max: dataMax,
 							beginAtZero:true
 						}
 					}]
