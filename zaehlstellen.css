@@ -23,6 +23,10 @@
 		text-align: center;
 	}
 	
+	#list{
+		font-size: 14px;
+	}
+	
 	#sliderDiv{
 			text-align: center;
 			padding-right: 15px;
@@ -100,12 +104,22 @@
 		background:#A4C4E8;
 		width:12%;
 		color:white;
+		font-weight:bold;
 		font-size: 14px;
 		/* Make Text Unselectable */
 		-webkit-user-select: none; /* Chrome/Safari */        
 		-moz-user-select: none; /* Firefox */
 		-ms-user-select: none; /* IE10+ */
+		-webkit-transition-duration: 0.4s; /* Safari */
+		transition-duration: 0.4s;
+		cursor: pointer;
+		border: 0.2px solid #ffffff;
 	}
+	.input-check:hover {
+		border-color: #A4C4E8;
+	}
+	
+	
 	/* This is the style for a checked "button" */
 	.input-check.checked{
 		display:inline-block;
@@ -119,11 +133,17 @@
 		-webkit-user-select: none; /* Chrome/Safari */        
 		-moz-user-select: none; /* Firefox */
 		-ms-user-select: none; /* IE10+ */
+		-webkit-transition-duration: 0.4s; /* Safari */
+		transition-duration: 0.4s;
+		border: 0.2px solid #010101;
 	}
+
 	/* Hide the checkbox */
 	.input-check input{
 		display:none
 	}
+
+	
 
 	/*-------------- Styling the slider --------------------------*/
 	input[type=range] {
@@ -297,4 +317,6 @@
 	#delete_snapshots{
 		float: right;
 		margin-right: 10%;
+		-webkit-transition-duration: 0s; /* Safari */
+		transition-duration: 0s;
 	}

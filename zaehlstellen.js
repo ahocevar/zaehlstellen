@@ -250,6 +250,8 @@ function change_state(obj){
 				
 				updateStyle(thisDate);
 				foundNextWeekday = true;
+				document.getElementById("time_slider").value = thisDate; // Update of Timeslider
+				if (typeof selectedFeatures !== "undefined"  && selectedFeatures.length > 0){createPolyChart(selectedFeatures)}
 			}
 			else if (selectedWeekdays.length == 0){ 
 				alert("No Weekday Selected");
@@ -261,9 +263,6 @@ function change_state(obj){
 				thisDate = (goLeft == true) ? thisDate-1 : thisDate+1;
 			}
 		}
-		if (typeof selectedFeatures !== "undefined"  && selectedFeatures.length > 0){createPolyChart(selectedFeatures)}
-		
-		document.getElementById("time_slider").value = thisDate; // Update of Timeslider
 	}
 	
 	
