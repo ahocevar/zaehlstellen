@@ -23,11 +23,20 @@
 			background.setSource(new ol.source.WMTS(options));
 		};
 		xhr.send();
-		
+		background.set('visible', true);
+		background.set('name', 'background');
 		map.addLayer(background);
 		
 		viewpoint = new ol.View({ center: ol.proj.fromLonLat([14.82719, 47.21595]), zoom: 9 });	
 		map.setView(viewpoint);	
+		
+		// Topographic Layer
+		var mapQuestAerial = new ol.layer.Tile({
+			visible: false,
+			source: new ol.source.MapQuest({layer: 'sat'})
+		});
+		mapQuestAerial.set('name', 'MapQuestOpenAerial');
+		map.addLayer(mapQuestAerial);	
 		
 		//vectorLayer = new ol.layer.Vector({
 		//	source: new ol.source.Vector()
@@ -464,7 +473,38 @@ function deleteSnapshots(){
 document.getElementById("snapshot_div").style.visibility = "hidden";
 }
 
+function noBackground(){	
+	map.getLayers().forEach(function(layer) { 
+		if (layer.get('name') == 'background') { 
+		  layer.setVisible(false); 
+		}
+		if (layer.get('name') == 'MapQuestOpenAerial') { 
+		  layer.setVisible(false); 
+		}
+	}); 
+}
 
+function viewBasemap(){
+	map.getLayers().forEach(function(layer) { 
+		if (layer.get('name') == 'background') { 
+		  layer.setVisible(true); 
+		}
+		if (layer.get('name') == 'MapQuestOpenAerial') { 
+		  layer.setVisible(false); 
+		}
+	}); 
+}
+
+function viewAerial(){
+	map.getLayers().forEach(function(layer) { 
+		if (layer.get('name') == 'background') { 
+		  layer.setVisible(false); 
+		}
+		if (layer.get('name') == 'MapQuestOpenAerial') { 
+		  layer.setVisible(true); 
+		}
+	}); 
+}
 	
 	
 	

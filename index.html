@@ -18,14 +18,19 @@
  
  
 <body onload="initMap(); init_dropzone();">  
-	<div id="map" class="map"></div>
-	
+	<div id="map" class="map">
+		<div id="layer_panel">
+			<button type="button" id="basemap" class="other_button" onclick="viewBasemap()"> Basemap </button>
+			<button type="button" id="topographic" class="other_button" onclick="viewAerial()"> Aerial </button>
+			<button type="button" id="no_background" class="other_button" onclick="noBackground()"> No Background </button>
+		</div>
+	</div>
 	<div id="menu">
 		<div id="drop_zone">Drop Zaehlstellen JSON</div>
 		<output id="list"></output>
 		<div id ="sliderDiv" style="display: none"> <!-- invisible at first -->
 			<div id="weekday_div">
-				<label class="input-check checked"><input onclick="change_state(this)" type="checkbox" value="1" id="monday" name="weekday"/> Mon </label>
+				<label class="input-check checked"><input onclick="change_state(this)" type="checkbox" value="1" name="weekday"/> Mon </label>
 				<label class="input-check checked"><input onclick="change_state(this)" type="checkbox" value="2" name="weekday"/> Tue </label>
 				<label class="input-check checked"><input onclick="change_state(this)" type="checkbox" value="3" name="weekday"/> Wed </label>
 				<label class="input-check checked"><input onclick="change_state(this)" type="checkbox" value="4" name="weekday"/> Thu </label>
@@ -46,8 +51,7 @@
 				<canvas id="myChart"></canvas>
 				<button type="button" id="snapshot_button" class="other_button" onclick="snapshot()"> &#128247; </button>
 				<div id="snapshot_div" style="visibility: hidden;"> <!-- div for table of Snapshots -->
-					<table id="snapshot_table">
-					<table>  
+					<table id="snapshot_table"></table>  
 				</div>
 				<button type="button" id="delete_snapshots" class="other_button" onclick="deleteSnapshots()"> Delete Snapshots </button>
 			</div>
@@ -56,6 +60,7 @@
 		</div>
 	</div>
 	
+
 </body>
 </html>
 

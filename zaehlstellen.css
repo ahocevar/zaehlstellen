@@ -15,6 +15,11 @@
 		z-index: -1;
 		float: left;
 	}	
+	
+	#map{
+		position: relative;	
+		z-index: 0;
+	}
   
 	#menu {
 		float: right; 
@@ -319,4 +324,24 @@
 		margin-right: 10%;
 		-webkit-transition-duration: 0s; /* Safari */
 		transition-duration: 0s;
+	}
+	
+	#layer_panel{
+		position: absolute;
+		top: 7px;
+		right: 10px;
+		overflow: visible;
+		z-index:9999;
+
+	}
+	#basemap{
+		float: left;
+	}
+	
+	#topographic{
+		float: left;
+	}
+	
+	#no_background{
+		float: left;
 	}
