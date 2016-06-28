@@ -28,14 +28,19 @@
 		text-align: center;
 	}
 	
+	#json_info_div{
+		align: center;
+		width: 80%
+	}
+	
 	#list{
-		font-size: 14px;
+		font-size: 12px;
 	}
 	
 	#sliderDiv{
-			text-align: center;
-			padding-right: 15px;
-			padding-left: 15px;
+		text-align: center;
+		padding-right: 15px;
+		padding-left: 15px;
 	}
 	/*
 	#time_slider{
@@ -84,6 +89,7 @@
 		width: 90%;
 		position: relative;
 		margin-top: 10px;
+		visibility: hidden;
 	}
 	
 	#myChart{
@@ -345,3 +351,4 @@
 	#no_background{
 		float: left;
 	}
+	

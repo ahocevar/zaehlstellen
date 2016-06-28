@@ -41,7 +41,8 @@
 		//vectorLayer = new ol.layer.Vector({
 		//	source: new ol.source.Vector()
 	//});
-	add_zaehlstellen(); // adds the Points of Zählstellen			
+	add_zaehlstellen(); // adds the Points of Zählstellen	
+
 	}
 
 
@@ -66,10 +67,11 @@ function add_zaehlstellen()
 				fill: new ol.style.Fill({color: 'black'})
 			})
 		})]
-		,
-	};
+		, 
+	};  
 	map.addLayer(ZaehlstellenPoints);
-	}
+		
+}
 	//------- Change Style of Points according to Value of Zählstelle --------->
 	function updateStyle(y){  // y = integer of current day
 		
@@ -132,6 +134,9 @@ function add_zaehlstellen()
 			find_dataRange(zaehlstellen_data);
 		};
 		reader.readAsText(f);	
+		
+		// global variable for selection
+		oldSelectedStreetNames = [] // Array for street names, if same amount of points are selected, but different streetnames -> redraw chart completely
 		document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';	
 	}
 	//---------- Drag Over ------------------->
@@ -278,11 +283,15 @@ function change_state(obj){
 	
 //--------------------- Select By Polygon (copypasta) ---------------->
 	var draw; // global so we can remove it later
-	
 	function SelectByPolygon(){
-		var drawingSource = new ol.source.Vector();
+		// remove point selection
+		if (typeof(select) !== "undefined") {
+			select.getFeatures().item(0).setStyle(null)	
+			map.removeInteraction(select);
+		};
+		drawingSource = new ol.source.Vector(); // global, unsauber?
 
-		var drawingLayer = new ol.layer.Vector({
+		var drawingLayer = new ol.layer.Vector({ 
 				source: drawingSource,
 				style: new ol.style.Style({
 				fill: new ol.style.Fill({
@@ -301,6 +310,7 @@ function change_state(obj){
 				})
 			});
 		map.addLayer(drawingLayer);	
+		//drawingLayer.set('name', 'drawingLayer');
 			
 		draw = new ol.interaction.Draw({
 			  source: drawingSource,
@@ -315,7 +325,7 @@ function change_state(obj){
 		draw.on('drawend', function(e){
 				var polygonGeometry = e.feature.getGeometry();
 				selectedFeatures = []; // Array for Point Features  // global because used when timeslider changes, not safe?
-				
+				oldSelectedStreetNames = [] // Array for street names, if same amount of points are selected, but different streetnames -> redraw chart completely
 				
 				for (i = 0; i < ZaehlstellenPoints.getSource().getFeatures().length; i++){ // for every Point (zaehlstelle)...
 					var pointExtent = ZaehlstellenPoints.getSource().getFeatures()[i].getGeometry().getExtent();
@@ -342,6 +352,7 @@ function createPolyChart(selectedFeatures){
 			selectedStreetNames.push(selectedFeatures[i].getProperties().zaehlstelle);  // get all streetnames (= zaehlstellen) from selection
 		};
 	
+	
 	// Get corresponding Data
 	var time = document.getElementById("time_slider").value;
 	var currentData = zaehlstellen_data[time]; // zaehlstellen-Data from all the Features at current time
@@ -364,15 +375,22 @@ function createPolyChart(selectedFeatures){
 	// Make Multi-Feature Chart
 	// Destroy existing Chart if number of selected Elements differs
 	var chartDestroyed = false;
-	if (myChart.id !== "myChart" && selectedFeatures.length != myChart.data.datasets[0].data.length){
-		//alert("destroy Chart")
+	
+	// JS Magic for comparing scalar arrays
+	//var SameStreetNames = selectedStreetNames.length!==oldSelectedStreetNames.length && selectedStreetNames.every(function(v,i) { return v === oldSelectedStreetNames[i]});
+	var SameStreetNames = selectedStreetNames.equals(oldSelectedStreetNames);
+	if (myChart.id !== "myChart" && (selectedFeatures.length !== myChart.data.datasets[0].data.length || !SameStreetNames )){
 		myChart.destroy();
 		chartDestroyed = true;
 		}
+	// overwrite the old selected Street Names, so if e.g. 1 point is selected both times, but its a different point, the chart is getting destroyed and remade
+	oldSelectedStreetNames = selectedStreetNames.slice() // global, not referenced
 	
+	// hide snapshot button if no point is selected (chart is invisible anyways, because no redraw)
+	if (selectedFeatures.length === 0){document.getElementById("snapshot_button").style.display="none";};
 	
 	// if Chart already exists, update it with new values and labels (e.g. only time changed)
-	if (myChart.id !== "myChart" && chartDestroyed == false && selectedFeatures.length > 0){
+	if (myChart.id !== "myChart" && chartDestroyed == false && selectedFeatures.length !== 0){
 		//alert ("update");
 		myChart.labels = selectedStreetNames;
 		myChart.data.datasets[0].data = selectedData;
@@ -381,7 +399,7 @@ function createPolyChart(selectedFeatures){
 		myChart.resize();
 	}
 	
-	else if (selectedFeatures.length > 0){	 // If Chart didnt exist before...
+	else if (selectedFeatures.length !== 0){	 // If Chart didnt exist before...
 		//alert ("first chart");
 		var ctx = document.getElementById("myChart");
 			myChart = new Chart(ctx, {  // global, unsauber?
@@ -409,6 +427,8 @@ function createPolyChart(selectedFeatures){
 				}
 			}
 		});
+	// make snapshot_button visible again
+	document.getElementById("snapshot_button").style.display="block";
 	}
 	// make div visible if something is in it
 	if (selectedFeatures.length > 0 || (typeof(snapshotArray) != "undefined" && snapshotArray.length >0)){
@@ -470,6 +490,7 @@ function deleteSnapshots(){
     for (i = lastRow; i >= 0; i--) {
         tbl.deleteRow(i);
     }
+snapshotArray = [];	
 document.getElementById("snapshot_div").style.visibility = "hidden";
 }
 
@@ -507,9 +528,99 @@ function viewAerial(){
 }
 	
 	
+/////////  TEST changing array protoype to compare (arr1.equals(arr2)) arrays, not part of a function?
+Array.prototype.equals = function (array, strict) {
+    if (!array)
+        return false;
+
+    if (arguments.length == 1)
+        strict = true;
+
+    if (this.length != array.length)
+        return false;
+
+    for (var i = 0; i < this.length; i++) {
+        if (this[i] instanceof Array && array[i] instanceof Array) {
+            if (!this[i].equals(array[i], strict))
+                return false;
+        }
+        else if (strict && this[i] != array[i]) {
+            return false;
+        }
+        else if (!strict) {
+            return this.sort().equals(array.sort(), true);
+        }
+    }
+    return true;
+}
+
+
+function SelectSinglePoint(){
+	// remove polygon selection
+	if (typeof(draw) !== "undefined") {
+		map.removeInteraction(draw);
+		drawingSource.clear();
+	};
+	select = new ol.interaction.Select(); // Interaktion
+	map.addInteraction(select); // Interaktion der Karte hinzufügen
 	
+	// single point selection
+	var oldStyle;
+	select.on('select', function(e) {
+		if(typeof(zaehlstellen_data) !== "undefined"){
+			var features = select.getFeatures(); // Feature Array
+			var feature = features.item(0); //  first element
+			var y = parseInt(document.getElementById("time_slider").value);
+			
+			var selected = e.selected;
+			var deselected = e.deselected;
+		
+			if (selected.length) {
+				selected.forEach(function(feature){	
+					var zaehlstelle = feature.values_.zaehlstelle;  // zaehlstelle = z.B. b0251
+					var amount = zaehlstellen_data[y][zaehlstelle]; // amount = z.B. 1055
+					//example: min_max_zaehlstelle["b02501"][1] = maximum of b02501
+					
+					//style when selected
+					var color_hue = 110 - Math.round((amount/min_max_zaehlstelle[zaehlstelle][1])*110) // 110 = green, 0 = red, between = yellow
+					var feature_color = 'hsl('+ color_hue +', 99%, 99%)';
+					
+					var radius_size = (Math.round((amount/min_max_zaehlstelle[zaehlstelle][1]))+1)*10;  
+					oldStyle = feature.getStyle();
+					var style_modify = new ol.style.Style({
+							image: new ol.style.Circle({
+								radius: radius_size,
+								fill: new ol.style.Fill({color: 'hsl('+color_hue+', 100%, 80%)'}),
+								stroke: new ol.style.Stroke({color: 'hsl('+color_hue+', 100%, 50%)', width: 7})
+						})
+					});
+					feature.setStyle(style_modify);
+					});
+				} 
+			if (deselected.length){
+				deselected.forEach(function(feature){
+					feature.setStyle(null);
+				});
+			}	
+
+			selectedFeatures = selected.length ? [feature] : []	;
+			createPolyChart(selectedFeatures);
+		} 
+	});	
 	
-	
-	
-	
-	
+	// changing cursor when over Feature
+	// map.on("pointermove", function (evt) {
+        // var hit = this.forEachFeatureAtPixel(evt.pixel,
+			// function(feature, layer) {
+			// return true;
+				// }); 
+			// if (hit) {
+				// this.getTarget().style.cursor = 'pointer';
+				// } else {
+			// this.getTarget().style.cursor = '';
+			// }	   
+	// });
+};			
+
+
+

@@ -27,7 +27,9 @@
 	</div>
 	<div id="menu">
 		<div id="drop_zone">Drop Zaehlstellen JSON</div>
-		<output id="list"></output>
+		<div id="json_info_div">
+			<output id="list"></output>
+		</div>
 		<div id ="sliderDiv" style="display: none"> <!-- invisible at first -->
 			<div id="weekday_div">
 				<label class="input-check checked"><input onclick="change_state(this)" type="checkbox" value="1" name="weekday"/> Mon </label>
@@ -38,6 +40,8 @@
 				<label class="input-check checked"><input onclick="change_state(this)" type="checkbox" value="6" name="weekday"/> Sat </label>
 				<label class="input-check checked"><input onclick="change_state(this)" type="checkbox" value="0" name="weekday"/> Sun </label>
 			</div>
+			<div id="popup">
+			</div>
 			<div id="sliderAndButtons">
 				<button type="button" class="timesliderButton" id="timeslider_button_left" onclick="changeDateOneStep(-1)"> &#9664; </button>  <!-- Button 1 step left -->
 				<div id="sliderOnly">
@@ -47,13 +51,15 @@
 			</div>
 			<p id="currentDate"> </p>
 			<button type="button" onclick="SelectByPolygon()" class="other_button"> Select by Polygon </button>
+			<button type="button" onclick="SelectSinglePoint()" class="other_button"> Single Point Selection </button>
 			<div id="canvas_div">
 				<canvas id="myChart"></canvas>
 				<button type="button" id="snapshot_button" class="other_button" onclick="snapshot()"> &#128247; </button>
 				<div id="snapshot_div" style="visibility: hidden;"> <!-- div for table of Snapshots -->
 					<table id="snapshot_table"></table>  
+					<button type="button" id="delete_snapshots" class="other_button" onclick="deleteSnapshots()"> Delete Snapshots </button>
 				</div>
-				<button type="button" id="delete_snapshots" class="other_button" onclick="deleteSnapshots()"> Delete Snapshots </button>
+				
 			</div>
 				
 		<!--<button type="button"  class="polygonButton"> Select Measuring Site </button> -->
