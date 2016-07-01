@@ -2,41 +2,61 @@
 //------------ Funktion initMap() für die Karte--------------------------------------------------------------------- -->
 	var map;
 	var viewpoint;
-
 	function initMap() {	
 		map = new ol.Map({target: "map"});
 		
 		//-------------------  Basemap  -------------------------------
-		var background = new ol.layer.Tile();
+		var background_grey = new ol.layer.Tile();
 		var xhr = new XMLHttpRequest();
 		xhr.open('GET', 'http://www.basemap.at/wmts/1.0.0/WMTSCapabilities.xml');
 		xhr.onload = function() {
 			var caps = new ol.format.WMTSCapabilities().read(xhr.responseText);
 			var hiDPI = ol.has.DEVICE_PIXEL_RATIO >= 1.5;
 			var options = ol.source.WMTS.optionsFromCapabilities(caps, {
-				layer: hiDPI ? 'bmaphidpi' : 'geolandbasemap',
+				layer: 'bmapgrau',
+				//layer: hiDPI ? 'bmaphidpi' : 'geolandbasemap',
 				matrixSet: 'google3857',
 				requestEncoding: 'REST',
-				style: 'normal'
+				style: 'normal' 
 			});
 			options.tilePixelRatio = hiDPI ? 2 : 1;
-			background.setSource(new ol.source.WMTS(options));
+			background_grey.setSource(new ol.source.WMTS(options));
 		};
 		xhr.send();
-		background.set('visible', true);
-		background.set('name', 'background');
-		map.addLayer(background);
+		background_grey.set('visible', true);
+		background_grey.set('name', 'grau');
+		map.addLayer(background_grey);
 		
 		viewpoint = new ol.View({ center: ol.proj.fromLonLat([14.82719, 47.21595]), zoom: 9 });	
 		map.setView(viewpoint);	
 		
 		// Topographic Layer
-		var mapQuestAerial = new ol.layer.Tile({
-			visible: false,
-			source: new ol.source.MapQuest({layer: 'sat'})
-		});
-		mapQuestAerial.set('name', 'MapQuestOpenAerial');
-		map.addLayer(mapQuestAerial);	
+		var background_ortho = new ol.layer.Tile();
+		var xhr_ortho = new XMLHttpRequest();
+		xhr_ortho.open('GET', 'http://www.basemap.at/wmts/1.0.0/WMTSCapabilities.xml');
+		xhr_ortho.onload = function() {
+			var caps = new ol.format.WMTSCapabilities().read(xhr_ortho.responseText);
+			var hiDPI = ol.has.DEVICE_PIXEL_RATIO >= 1.5;
+			var options = ol.source.WMTS.optionsFromCapabilities(caps, {
+				layer: "bmaporthofoto30cm",
+				//layer: hiDPI ? 'bmaphidpi' : 'geolandbasemap',
+				matrixSet: 'google3857',
+				requestEncoding: 'REST',
+				style: 'normal' 
+			});
+			options.tilePixelRatio = hiDPI ? 2 : 1;
+			background_ortho.setSource(new ol.source.WMTS(options));
+		};
+		xhr_ortho.send();
+		background_ortho.set('visible', false);
+		background_ortho.set('name', 'ortho');
+		map.addLayer(background_ortho);
+		//var mapQuestAerial = new ol.layer.Tile({
+		//	visible: false,
+		//	source: new ol.source.MapQuest({layer: 'sat'})
+	//});
+		//mapQuestAerial.set('name', 'MapQuestOpenAerial');
+		//map.addLayer(mapQuestAerial);	
 		
 		//vectorLayer = new ol.layer.Vector({
 		//	source: new ol.source.Vector()
@@ -496,10 +516,10 @@ document.getElementById("snapshot_div").style.visibility = "hidden";
 
 function noBackground(){	
 	map.getLayers().forEach(function(layer) { 
-		if (layer.get('name') == 'background') { 
+		if (layer.get('name') == 'grau') { 
 		  layer.setVisible(false); 
 		}
-		if (layer.get('name') == 'MapQuestOpenAerial') { 
+		if (layer.get('name') == 'ortho') { 
 		  layer.setVisible(false); 
 		}
 	}); 
@@ -507,10 +527,10 @@ function noBackground(){
 
 function viewBasemap(){
 	map.getLayers().forEach(function(layer) { 
-		if (layer.get('name') == 'background') { 
+		if (layer.get('name') == 'grau') { 
 		  layer.setVisible(true); 
 		}
-		if (layer.get('name') == 'MapQuestOpenAerial') { 
+		if (layer.get('name') == 'ortho') { 
 		  layer.setVisible(false); 
 		}
 	}); 
@@ -518,10 +538,10 @@ function viewBasemap(){
 
 function viewAerial(){
 	map.getLayers().forEach(function(layer) { 
-		if (layer.get('name') == 'background') { 
+		if (layer.get('name') == 'grau') { 
 		  layer.setVisible(false); 
 		}
-		if (layer.get('name') == 'MapQuestOpenAerial') { 
+		if (layer.get('name') == 'ortho') { 
 		  layer.setVisible(true); 
 		}
 	}); 
