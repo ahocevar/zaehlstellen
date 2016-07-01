@@ -640,7 +640,23 @@ function SelectSinglePoint(){
 			// this.getTarget().style.cursor = '';
 			// }	   
 	// });
-};			
+};	
+
+// functon for changing Time every second 
+function autoPlay(){
+		if (typeof(interval_handle) == "undefined"){
+				interval_handle = setInterval(function(){
+						changeDateOneStep(1);
+						if(document.getElementById("time_slider").value == zaehlstellen_data.length){updateInput(0, false);} // if maximum time is reached
+					}, 1000);
+			document.getElementById("auto_play_button").innerHTML = "Stop &#10074; &#10074;";
+		}
+		else{
+			clearInterval(interval_handle); // clear Interval
+			delete window.interval_handle; // destroy Interval Handle
+			document.getElementById("auto_play_button").innerHTML = "Auto-Play &#9658";
+		}
+};
 
 
 

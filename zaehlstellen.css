@@ -101,6 +101,9 @@
 		margin-right: 10 px;
 		overflow: auto;
 	}
+	#playbutton_div{
+		height: 40px;
+	}
 	
 	#weekday_div {
 		margin-top: 30px;
