@@ -73,8 +73,10 @@
 	}
 	
   
-	#drop_zone{
+	.drop_zone{
 		height: 70px;
+		width: 45%;
+		float: left;
 		line-height: 70px;
 		margin: 10px;
 		border: 1px;
@@ -102,6 +104,7 @@
 		overflow: auto;
 	}
 	#playbutton_div{
+		height: 40px;
 		height: 40px;
 	}
 	

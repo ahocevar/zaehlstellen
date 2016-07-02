@@ -125,7 +125,7 @@ function add_zaehlstellen()
 	//------- Drag and Drop -------------------->
 	// Initiate the Dropzone
 	function init_dropzone(){
-		var dropZone = document.getElementById('drop_zone');
+		var dropZone = document.getElementById('drop_zone2');
 		dropZone.addEventListener('dragover', handleDragOver, false);
 		dropZone.addEventListener('drop', handleFileSelect, false);
 	}
@@ -173,11 +173,11 @@ function add_zaehlstellen()
 		changeRange(data.length-1);
 	}
 	//---------- Button one step left/right ---------->
-	function changeDateOneStep(step){    // takes -1 or 1 from left/right-Buttons and updates the current Date
+	function changeDateOneStep(step, loop){    // takes -1 or 1 from left/right-Buttons and updates the current Date, loop is true when auto-play is on, so it starts at 0 when end of data is reached
 		var x = document.getElementById("time_slider").value;
 		var thisDate = parseInt(x) + parseInt(step); // thisDate = integer of Timestep (e.g. 0 = first Date in Data)
 		var goLeft = (step == -1) ? true : false;
-		updateInput(thisDate, goLeft);
+		updateInput(thisDate, goLeft, loop);
 	}
 	//---------- Find min and max Data Values for Visualization ---------->
 	function find_dataRange(data){	
@@ -198,7 +198,7 @@ function add_zaehlstellen()
 			}
 			min_max_zaehlstelle[name_zaehlstelle] = min_max; // assign min/max-Values to Object
 		}	
-		updateInput(0, false); // initiate timeslider to first day of data 
+		updateInput(0, false, false); // initiate timeslider to first day of data 
 		//document.getElementById("time_slider").value = 0;
 	}
 	//--------- Parse Date-Strings into JS Date Objects -------------------->
@@ -238,7 +238,7 @@ function change_state(obj){
 	}
 	
 	//  Update of Shown Value   -->
-	function updateInput(thisDate, goLeft) {
+	function updateInput(thisDate, goLeft, loop) { // go left: true if going left. loop: true to start at 0 when max x time is reached
 		//var currentDate = zaehlstellen_data[thisDate].datum;
 		//document.getElementById('currentDate').innerHTML=currentDate; 
 		// Create Arrays for Printing the Date
@@ -255,6 +255,16 @@ function change_state(obj){
 		// repeat until selected weekday is found
 		while (foundNextWeekday == false){
 			thisDate = parseInt(thisDate);
+			
+			if(thisDate >= zaehlstellen_data.length-1){ // if maximum time is reached
+				if (loop === true){
+					thisDate = 0;
+				}
+				else{
+					break;
+				}	 
+			};
+			
 			var d = zaehlstellen_data[thisDate].datum;
 			if (typeof(selectedWeekdays) != "undefined" && selectedWeekdays.indexOf(d.getDay()) >= 0){
 				var curr_day = d.getDay();
@@ -498,7 +508,7 @@ function snapshot(){
 
 function showSnapshot(snapshotIndex){
 	//console.log ("show Snapshot Number " + snapshotIndex);	
-	updateInput(snapshotArray[snapshotIndex][0], false);
+	updateInput(snapshotArray[snapshotIndex][0], false, false);
 	createPolyChart(snapshotArray[snapshotIndex][1]);	
 };
 
@@ -646,8 +656,7 @@ function SelectSinglePoint(){
 function autoPlay(){
 		if (typeof(interval_handle) == "undefined"){
 				interval_handle = setInterval(function(){
-						changeDateOneStep(1);
-						if(document.getElementById("time_slider").value == zaehlstellen_data.length){updateInput(0, false);} // if maximum time is reached
+						changeDateOneStep(1, true); // loop = true
 					}, 1000);
 			document.getElementById("auto_play_button").innerHTML = "Stop &#10074; &#10074;";
 		}
