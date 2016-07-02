@@ -51,28 +51,20 @@
 		background_ortho.set('visible', false);
 		background_ortho.set('name', 'ortho');
 		map.addLayer(background_ortho);
-		//var mapQuestAerial = new ol.layer.Tile({
-		//	visible: false,
-		//	source: new ol.source.MapQuest({layer: 'sat'})
-	//});
-		//mapQuestAerial.set('name', 'MapQuestOpenAerial');
-		//map.addLayer(mapQuestAerial);	
-		
-		//vectorLayer = new ol.layer.Vector({
-		//	source: new ol.source.Vector()
-	//});
-	add_zaehlstellen(); // adds the Points of Zählstellen	
+
+	//add_zaehlstellen(); // adds the Points of Zählstellen	
 
 	}
 
 
 //---- Zählstellenpunkte für Karte --------------------------------------------------------------------------->
-function add_zaehlstellen()	
+function add_zaehlstellen(coords_json)	
 {		
 	ZaehlstellenPoints = new ol.layer.Vector({
 		source: new ol.source.Vector({
-			url: "http://robertorthofer.github.io/zaehlstellen/test_coords.json",
-			format: new ol.format.GeoJSON()
+			features: (new ol.format.GeoJSON()).readFeatures(coords_json, { featureProjection: 'EPSG:3857' })
+			//url: coords_json,
+			//format: new ol.format.GeoJSON()
 		}),
 		style: function(feature, resolution){ 
 			var geom = feature.getGeometry().getType();
@@ -90,6 +82,12 @@ function add_zaehlstellen()
 		, 
 	};  
 	map.addLayer(ZaehlstellenPoints);
+	ZaehlstellenPoints.set('name', 'zaehlstellen');
+	if (typeof(zaehlstellen_data)!== "undefined"){
+		updateStyle(0); 
+		updateInput(0, false, false);
+		document.getElementById("sliderDiv").style.display= 'block';	
+	} 
 		
 }
 	//------- Change Style of Points according to Value of Zählstelle --------->
@@ -125,13 +123,40 @@ function add_zaehlstellen()
 	//------- Drag and Drop -------------------->
 	// Initiate the Dropzone
 	function init_dropzone(){
-		var dropZone = document.getElementById('drop_zone2');
-		dropZone.addEventListener('dragover', handleDragOver, false);
-		dropZone.addEventListener('drop', handleFileSelect, false);
+		var dropZone1 = document.getElementById('drop_zone1');
+		dropZone1.addEventListener('dragover', handleDragOver, false);
+		dropZone1.addEventListener('drop', handleFileSelect1, false);	
+		
+		var dropZone2 = document.getElementById('drop_zone2');
+		dropZone2.addEventListener('dragover', handleDragOver, false);
+		dropZone2.addEventListener('drop', handleFileSelect2, false);
 	}
 	
 	//---------- Get File Reference ---------->
-	function handleFileSelect(evt) {
+	function handleFileSelect1(evt) {
+		evt.stopPropagation();
+		evt.preventDefault();
+		
+		var files = evt.dataTransfer.files; // FileList object.
+		
+		// files is a FileList of File objects. List some properties.
+		var output = [];
+		f = files[0];
+		output.push('<li><strong>', escape(f.name), '</strong>  - ',
+		f.size, ' bytes, last modified: ',
+		f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a','</li>');
+		
+		var reader = new FileReader(); // to read the FileList object
+		reader.onload = function(event){  // Reader ist asynchron, wenn reader mit operation fertig ist, soll das hier (JSON.parse) ausgeführt werden, sonst ist es noch null				
+			var coords_json = JSON.parse(reader.result);  
+			add_zaehlstellen(coords_json);
+		};
+		reader.readAsText(f);	
+		
+		document.getElementById('list_coords').innerHTML = '<ul>' + output.join('') + '</ul>';	
+	}
+	
+	function handleFileSelect2(evt) {
 		evt.stopPropagation();
 		evt.preventDefault();
 		
@@ -152,6 +177,14 @@ function add_zaehlstellen()
 			selectedWeekdays = [0,1,2,3,4,5,6]; // select all weekdays before timeslider gets initialized
 			init_timeslider(zaehlstellen_data);
 			find_dataRange(zaehlstellen_data);
+			
+			map.getLayers().forEach(function(layer) { 
+				if (layer.get('name') == 'zaehlstellen') { 
+				  updateStyle(0); 
+				  updateInput(0, false, false);
+				  document.getElementById("sliderDiv").style.display= 'block';	
+				}
+			});
 		};
 		reader.readAsText(f);	
 		
@@ -159,6 +192,8 @@ function add_zaehlstellen()
 		oldSelectedStreetNames = [] // Array for street names, if same amount of points are selected, but different streetnames -> redraw chart completely
 		document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';	
 	}
+	
+	
 	//---------- Drag Over ------------------->
 	function handleDragOver(evt) {
 		evt.stopPropagation();
@@ -168,9 +203,8 @@ function add_zaehlstellen()
 	//---------- Fill Timeslider with min and max Values ---------->
 	function init_timeslider(data){
 		var minDatum = data[0].datum;
-		var maxDatum = data[data.length-1].datum;
-		document.getElementById("sliderDiv").style.display= 'block';		
-		changeRange(data.length-1);
+		var maxDatum = data[data.length-1].datum;		
+		document.getElementById("time_slider").setAttribute("max", data.length-1);
 	}
 	//---------- Button one step left/right ---------->
 	function changeDateOneStep(step, loop){    // takes -1 or 1 from left/right-Buttons and updates the current Date, loop is true when auto-play is on, so it starts at 0 when end of data is reached
@@ -187,8 +221,6 @@ function add_zaehlstellen()
 			var name_zaehlstelle = Object.keys(zaehlstellen_data[0])[k];
 			var min_max = [Infinity, -Infinity];
 			
-			//min_max_zaehlstelle[name_zaehlstelle]["min"] = Infinity;
-			//min_max_zaehlstelle[name_zaehlstelle]["max"] = -Infinity;
 			for (i = 1; i < data.length; i++){  // also via keys? // value of zaehlstelle at certain date
 				var amount = data[i][name_zaehlstelle];
 				
@@ -198,7 +230,7 @@ function add_zaehlstellen()
 			}
 			min_max_zaehlstelle[name_zaehlstelle] = min_max; // assign min/max-Values to Object
 		}	
-		updateInput(0, false, false); // initiate timeslider to first day of data 
+		//updateInput(0, false, false); // initiate timeslider to first day of data 
 		//document.getElementById("time_slider").value = 0;
 	}
 	//--------- Parse Date-Strings into JS Date Objects -------------------->
@@ -210,7 +242,6 @@ function add_zaehlstellen()
 			var thisDay   = parseInt(datestring.substring(8,10));
 			var thisDateComplete = new Date(thisYear, thisMonth-1, thisDay);  // JS-Date Month begins at 0
 			zaehlstellen_data[i].datum = thisDateComplete;
-			//zaehlstellen_data[i].selected_weekday = true; // Create Property Selected Weekday, always True when newData ()
 		}		
 	}
 //-------- Function for Checkboxes of Weekday-Selection (visuals) ------------>
@@ -229,13 +260,6 @@ function change_state(obj){
 			selectedWeekdays.push(parseInt(document.getElementsByClassName("input-check checked")[i].childNodes[0].value));
 		}
     }
-
-	//---- Update des Timeslider  ----------------->
-	// Set max of Timeslider -->
-	
-	function changeRange(dataRange) {
-		document.getElementById("time_slider").setAttribute("max", dataRange);
-	}
 	
 	//  Update of Shown Value   -->
 	function updateInput(thisDate, goLeft, loop) { // go left: true if going left. loop: true to start at 0 when max x time is reached
@@ -263,6 +287,10 @@ function change_state(obj){
 				else{
 					break;
 				}	 
+			};
+			
+			if (thisDate < 0){
+				break;
 			};
 			
 			var d = zaehlstellen_data[thisDate].datum;
