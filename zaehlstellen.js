@@ -39,7 +39,6 @@
 			var hiDPI = ol.has.DEVICE_PIXEL_RATIO >= 1.5;
 			var options = ol.source.WMTS.optionsFromCapabilities(caps, {
 				layer: "bmaporthofoto30cm",
-				//layer: hiDPI ? 'bmaphidpi' : 'geolandbasemap',
 				matrixSet: 'google3857',
 				requestEncoding: 'REST',
 				style: 'normal' 
@@ -51,9 +50,6 @@
 		background_ortho.set('visible', false);
 		background_ortho.set('name', 'ortho');
 		map.addLayer(background_ortho);
-
-	//add_zaehlstellen(); // adds the Points of Zählstellen	
-
 	}
 
 
@@ -93,29 +89,38 @@ function add_zaehlstellen(coords_json)
 	//------- Change Style of Points according to Value of Zählstelle --------->
 	function updateStyle(y){  // y = integer of current day
 		
+		// calculate min and max values for current day (for radius)		
+		var min_max_thisDay ={};
+		for (k = 1; k < Object.keys(zaehlstellen_data[y]).length; k++){  // name of zaehlstelle // k = 1 because 0 is date 
+			var min_max = [Infinity, -Infinity];
+			var amount = Object.values(zaehlstellen_data[y])[k]; // of for every zaehlstelle 	
+			
+			if (amount < min_max[0]) {min_max[0] = amount}; // minimum
+			if (amount > min_max[1]) {min_max[1] = amount}; // maximum
+			min_max_thisDay = min_max; // assign min/max-Values to Object
+		}
+	
 		ZaehlstellenPoints.setStyle(function(feature, resolution){
-		var geom = feature.getGeometry().getType();  // geom = point
-		var zaehlstelle = feature.values_.zaehlstelle;  // zaehlstelle = z.B. b0251
-		
-		var amount = zaehlstellen_data[y][zaehlstelle]; // amount = z.B. 1055
-		//example: min_max_zaehlstelle["b02501"][1] = maximum of b02501
-		
-		var color_hue = 110 - Math.round((amount/min_max_zaehlstelle[zaehlstelle][1])*110) // 110 = green, 0 = red, between = yellow
-		var feature_color = 'hsl('+ color_hue +', 99%, 99%)';
-		
-		var radius_size = (Math.round((amount/min_max_zaehlstelle[zaehlstelle][1]))+1)*10;  
-		
-		var styles = {
-			'Point': [new ol.style.Style({
-			image: new ol.style.Circle({
-			radius: radius_size,
-			fill: new ol.style.Fill({color: 'hsl('+color_hue+', 100%, 50%)'}),
-			stroke: new ol.style.Stroke({color: 'hsl('+color_hue+', 100%, 20%)', width: 3})
-			})
-			})]
-			,
-		};						
-		return styles[geom];
+			var geom = feature.getGeometry().getType();  // geom = point
+			var zaehlstelle = feature.values_.zaehlstelle;  // zaehlstelle = z.B. b0251
+			var amount = zaehlstellen_data[y][zaehlstelle]; // amount = z.B. 1055
+			//example: min_max_zaehlstelle["b02501"][1] = maximum of b02501 of all days
+			
+			var color_hue = 110 - Math.round((amount/min_max_zaehlstelle[zaehlstelle][1])*110) // 110 = green, 0 = red, between = yellow
+			var feature_color = 'hsl('+ color_hue +', 99%, 99%)';
+			var radius_size = (Math.round((amount/min_max_thisDay[1]))+1)*10;  
+			
+			var styles = {
+				'Point': [new ol.style.Style({
+				image: new ol.style.Circle({
+				radius: radius_size,
+				fill: new ol.style.Fill({color: 'hsl('+color_hue+', 100%, 50%)'}),
+				stroke: new ol.style.Stroke({color: 'hsl('+color_hue+', 100%, 20%)', width: 3})
+				})
+				})]
+				,
+			};						
+			return styles[geom];
 		});
 	};					
 	
@@ -164,7 +169,6 @@ function add_zaehlstellen(coords_json)
 		
 		// files is a FileList of File objects. List some properties.
 		var output = [];
-		//for (var i = 0, f; f = files[i]; i++) {
 		f = files[0];
 		output.push('<li><strong>', escape(f.name), '</strong>  - ',
 		f.size, ' bytes, last modified: ',
@@ -216,7 +220,6 @@ function add_zaehlstellen(coords_json)
 	//---------- Find min and max Data Values for Visualization ---------->
 	function find_dataRange(data){	
 		min_max_zaehlstelle ={};
-		//k = 0; // first zaehlstelle
 		for (k = 1; k < Object.keys(data[0]).length; k++){  // name of zaehlstelle 
 			var name_zaehlstelle = Object.keys(zaehlstellen_data[0])[k];
 			var min_max = [Infinity, -Infinity];
@@ -230,8 +233,6 @@ function add_zaehlstellen(coords_json)
 			}
 			min_max_zaehlstelle[name_zaehlstelle] = min_max; // assign min/max-Values to Object
 		}	
-		//updateInput(0, false, false); // initiate timeslider to first day of data 
-		//document.getElementById("time_slider").value = 0;
 	}
 	//--------- Parse Date-Strings into JS Date Objects -------------------->
 	function makeDateObjects(data){
@@ -263,8 +264,6 @@ function change_state(obj){
 	
 	//  Update of Shown Value   -->
 	function updateInput(thisDate, goLeft, loop) { // go left: true if going left. loop: true to start at 0 when max x time is reached
-		//var currentDate = zaehlstellen_data[thisDate].datum;
-		//document.getElementById('currentDate').innerHTML=currentDate; 
 		// Create Arrays for Printing the Date
 		var d_names = new Array("Sunday", "Monday", "Tuesday",
 		"Wednesday", "Thursday", "Friday", "Saturday");
@@ -273,7 +272,6 @@ function change_state(obj){
 		"April", "May", "June", "July", "August", "September", 
 		"October", "November", "December");
 
-		//var d = zaehlstellen_data[thisDate].datum;
 		//check if day of week is selected
 		var foundNextWeekday = false;
 		// repeat until selected weekday is found
@@ -331,7 +329,6 @@ function change_state(obj){
 				foundNextWeekday = true;
 				} // Break while when end of Data is reached
 			else{
-				//alert(thisDate)
 				thisDate = (goLeft == true) ? thisDate-1 : thisDate+1;
 			}
 		}
@@ -368,7 +365,6 @@ function change_state(obj){
 				})
 			});
 		map.addLayer(drawingLayer);	
-		//drawingLayer.set('name', 'drawingLayer');
 			
 		draw = new ol.interaction.Draw({
 			  source: drawingSource,
@@ -390,13 +386,7 @@ function change_state(obj){
 					if (polygonGeometry.intersectsExtent(pointExtent)==true){ //returns true when Polygon intersects with Extent of Point (= Point itself)
 						selectedFeatures.push(ZaehlstellenPoints.getSource().getFeatures()[i]);
 					}   
-				}
-
-				// var polygonExtent = e.feature.getGeometry().getExtent();  
-				// ZaehlstellenPoints.getSource().forEachFeatureIntersectingExtent(polygonExtent, function(feature) {
-					// selectedFeatures.push(feature);  // Array with all selected Features	
-				// }); 
-				
+				}	
 				createPolyChart(selectedFeatures);
 			});
 	map.addInteraction(draw);
@@ -421,8 +411,6 @@ function createPolyChart(selectedFeatures){
 		
 	// get maximum of selected features at all times (to set maximum of scale)
 	var dataMax = 0;
-	//var keys = Object.keys(min_max_zaehlstelle);
-	//alert (keys);
 	for (var i = 0; i < selectedStreetNames.length; i++) {
 		if (min_max_zaehlstelle[selectedStreetNames[i]][1] > dataMax){dataMax = min_max_zaehlstelle[selectedStreetNames[i]][1];}; // if maximum value of selected zaehlstelle is bigger than current maximum value, replace it
 	}
@@ -458,7 +446,6 @@ function createPolyChart(selectedFeatures){
 	}
 	
 	else if (selectedFeatures.length !== 0){	 // If Chart didnt exist before...
-		//alert ("first chart");
 		var ctx = document.getElementById("myChart");
 			myChart = new Chart(ctx, {  // global, unsauber?
 			type: 'bar',
@@ -523,19 +510,14 @@ function snapshot(){
 	btn.value = buttonText;
 	btn.setAttribute('snapshotIndex', tbl.rows.length);
 	btn.onclick = function () {showSnapshot(this.getAttribute('snapshotIndex')-1);};
- 
-	//td.appendChild(btn);
-	
+ 	
 	eyeButtonCell.appendChild(btn); 
-	//snapshotNameCell.innerHTML = "Snapshot " + tbl.rows.length;
-	//deleteRowButtonCell.innerHTML = "Delete Snapshot";
 	
 	document.getElementById("snapshot_div").style.visibility='visible';
 	
 };
 
 function showSnapshot(snapshotIndex){
-	//console.log ("show Snapshot Number " + snapshotIndex);	
 	updateInput(snapshotArray[snapshotIndex][0], false, false);
 	createPolyChart(snapshotArray[snapshotIndex][1]);	
 };
