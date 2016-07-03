@@ -86,29 +86,32 @@ function add_zaehlstellen(coords_json)
 	} 
 		
 }
+
+
 	//------- Change Style of Points according to Value of Zählstelle --------->
 	function updateStyle(y){  // y = integer of current day
-		
+		console.log(window.radiustest);
+		window.radiustest = 0;
 		// calculate min and max values for current day (for radius)		
-		var min_max_thisDay ={};
+		var max_thisDay = -Infinity;
 		for (k = 1; k < Object.keys(zaehlstellen_data[y]).length; k++){  // name of zaehlstelle // k = 1 because 0 is date 
-			var min_max = [Infinity, -Infinity];
 			var amount = Object.values(zaehlstellen_data[y])[k]; // of for every zaehlstelle 	
-			
-			if (amount < min_max[0]) {min_max[0] = amount}; // minimum
-			if (amount > min_max[1]) {min_max[1] = amount}; // maximum
-			min_max_thisDay = min_max; // assign min/max-Values to Object
+			if (amount > max_thisDay) {max_thisDay = amount}; // maximum
 		}
 	
 		ZaehlstellenPoints.setStyle(function(feature, resolution){
 			var geom = feature.getGeometry().getType();  // geom = point
 			var zaehlstelle = feature.values_.zaehlstelle;  // zaehlstelle = z.B. b0251
 			var amount = zaehlstellen_data[y][zaehlstelle]; // amount = z.B. 1055
-			//example: min_max_zaehlstelle["b02501"][1] = maximum of b02501 of all days
+			//example: min_max_zaehlstelle["b02501"][1] = maximum of b02501 of all days  
 			
 			var color_hue = 110 - Math.round((amount/min_max_zaehlstelle[zaehlstelle][1])*110) // 110 = green, 0 = red, between = yellow
 			var feature_color = 'hsl('+ color_hue +', 99%, 99%)';
-			var radius_size = (Math.round((amount/min_max_thisDay[1]))+1)*10;  
+			var radius_size = Math.sqrt((amount/(2*Math.PI)))/Math.sqrt((max_thisDay/(2*Math.PI)))*35;  
+			
+		if (radius_size > window.radiustest) {window.radiustest = radius_size}; // maximum TEST
+			
+			
 			
 			var styles = {
 				'Point': [new ol.style.Style({
