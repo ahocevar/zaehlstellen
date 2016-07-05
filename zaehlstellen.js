@@ -91,9 +91,11 @@ function add_zaehlstellen(coords_json)
 		window.radiustest = 0;
 		// calculate min and max values for current day (for radius)
 		var max_thisDay = -Infinity;
-		for (k = 1; k < Object.keys(zaehlstellen_data[y]).length; k++){  // name of zaehlstelle // k = 1 because 0 is date
-			var amount = Object.values(zaehlstellen_data[y])[k]; // of for every zaehlstelle
-			if (amount > max_thisDay) {max_thisDay = amount}; // maximum
+		for (var k in zaehlstellen_data[y]) { // of for every zaehlstelle
+			if (typeof zaehlstellen_data[y][k] == 'number') { // only numbers, one item is the date
+				var amount = zaehlstellen_data[y][k];
+				if (amount > max_thisDay) {max_thisDay = amount}; // maximum
+			}
 		}
 
 		ZaehlstellenPoints.setStyle(function(feature, resolution){
