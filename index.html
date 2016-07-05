@@ -35,62 +35,60 @@
 			<output id="list" class="list"></output>
 		</div>
 		<div id ="sliderDiv" style="display: none"> <!-- invisible at first -->
-		<div id="weekday_div">
-				<label class="input-check checked"><input onclick="change_state(this)" type="checkbox" value="1" name="weekday"/> Mon </label>
-				<label class="input-check checked"><input onclick="change_state(this)" type="checkbox" value="2" name="weekday"/> Tue </label>
-				<label class="input-check checked"><input onclick="change_state(this)" type="checkbox" value="3" name="weekday"/> Wed </label>
-				<label class="input-check checked"><input onclick="change_state(this)" type="checkbox" value="4" name="weekday"/> Thu </label>
-				<label class="input-check checked"><input onclick="change_state(this)" type="checkbox" value="5" name="weekday"/> Fri </label>
-				<label class="input-check checked"><input onclick="change_state(this)" type="checkbox" value="6" name="weekday"/> Sat </label>
-				<label class="input-check checked"><input onclick="change_state(this)" type="checkbox" value="0" name="weekday"/> Sun </label>
-		</div>
-		<div id="popup">
-		</div>
-		<div id="playbutton_div">
-			<button type="button" id="auto_play_button" class="other_button" onclick="autoPlay();"> Auto-Play &#9658;</button>
-		</div>
-		<div id="sliderAndButtons">
-			<button type="button" class="timesliderButton" id="timeslider_button_left" onclick="changeDateOneStep(-1, false)"> &#9664; </button>  <!-- Button 1 step left -->
-			<div id="sliderOnly">
-				<input type="range" id="time_slider" name="rangeInput" min="0" onchange="updateInput(this.value, false);" oninput="updateInput(this.value, false);"> 
+			<div id="weekday_div">
+					<label class="input-check checked"><input onclick="change_state(this)" type="checkbox" value="1" name="weekday"/> Mon </label>
+					<label class="input-check checked"><input onclick="change_state(this)" type="checkbox" value="2" name="weekday"/> Tue </label>
+					<label class="input-check checked"><input onclick="change_state(this)" type="checkbox" value="3" name="weekday"/> Wed </label>
+					<label class="input-check checked"><input onclick="change_state(this)" type="checkbox" value="4" name="weekday"/> Thu </label>
+					<label class="input-check checked"><input onclick="change_state(this)" type="checkbox" value="5" name="weekday"/> Fri </label>
+					<label class="input-check checked"><input onclick="change_state(this)" type="checkbox" value="6" name="weekday"/> Sat </label>
+					<label class="input-check checked"><input onclick="change_state(this)" type="checkbox" value="0" name="weekday"/> Sun </label>
 			</div>
-			<button type="button" class="timesliderButton" id="timeslider_button_right" onclick="changeDateOneStep(1, false)"> &#9654;</button> <!-- Button 1 step right -->
-		</div>
-		<p id="currentDate"> </p>
-		<button type="button" onclick="SelectByPolygon()" class="other_button"> Select by Polygon </button>
-		<button type="button" onclick="SelectSinglePoint()" class="other_button"> Single Point Selection </button>
-		<div id="canvas_div">
-			<canvas id="myChart"></canvas>
-			<button type="button" id="snapshot_button" class="other_button" onclick="snapshot()"> &#128247; </button>
-			<div id="snapshot_div" style="visibility: hidden;"> <!-- div for table of Snapshots -->
-				<table id="snapshot_table"></table>  
-				<button type="button" id="delete_snapshots" class="other_button" onclick="deleteSnapshots()"> Delete Snapshots </button>
+			<div id="popup">
 			</div>
-		</div>
-				
-		<!--<button type="button"  class="polygonButton"> Select Measuring Site </button> -->
-		</div>
-		<div id="legend">
-			<div id="size_legend">	
-				<div id="size_image_div">
-					<img id="size_legend_image" src="images/size_legend_triple.svg" alt="size_legend" style="float:left;">
-				</div>	
-				<div id="size_image_text">
-					<div id="size_image_max"><p>TEST Maximum</p></div>
-					<div id="size_image_mid"><p>TEST Minimum</p></div>
-					<div id="size_image_min"><p>TEST Minimum</p></div>
+			<div id="playbutton_div">
+				<button type="button" id="auto_play_button" class="other_button" onclick="autoPlay();"> Auto-Play &#9658;</button>
+			</div>
+			<div id="sliderAndButtons">
+				<button type="button" class="timesliderButton" id="timeslider_button_left" onclick="changeDateOneStep(-1, false)"> &#9664; </button>  <!-- Button 1 step left -->
+				<div id="sliderOnly">
+					<input type="range" id="time_slider" name="rangeInput" min="0" onchange="updateInput(this.value, false);" oninput="updateInput(this.value, false);"> 
+				</div>
+				<button type="button" class="timesliderButton" id="timeslider_button_right" onclick="changeDateOneStep(1, false)"> &#9654;</button> <!-- Button 1 step right -->
+			</div>
+			<p id="currentDate"> </p>
+			<button type="button" onclick="SelectByPolygon()" class="other_button"> Select by Polygon </button>
+			<button type="button" onclick="SelectSinglePoint()" class="other_button"> Single Point Selection </button>
+			<div id="canvas_div">
+				<canvas id="myChart"></canvas>
+				<button type="button" id="snapshot_button" class="other_button" onclick="snapshot()"> &#128247; </button>
+				<div id="snapshot_div" style="visibility: hidden;"> <!-- div for table of Snapshots -->
+					<table id="snapshot_table"></table>  
+					<button type="button" id="delete_snapshots" class="other_button" onclick="deleteSnapshots()"> Delete Snapshots </button>
 				</div>
 			</div>
-			<div id="color_legend">
-				<div id="color_image_div">
-					<img id="color_legend_image" src="images/colormap_vert.svg" alt="color_map" style="float:right;">
+			<div id="legend">
+				<div id="size_legend">	
+					<div id="size_image_div">
+						<img id="size_legend_image" src="images/size_legend_triple.svg" alt="size_legend" style="float:left;">
+					</div>	
+					<div id="size_image_text">
+						<div id="size_image_max"><p>TEST Maximum</p></div>
+						<div id="size_image_mid"><p>TEST Middle</p></div>
+						<div id="size_image_min"><p>TEST Minimum</p></div>
+					</div>
 				</div>
-				<div id="color_image_text">
-					<div id="color_maximum"><p>Maximum</p></div>
-					<div id="color_minimum"><p>Minimum</p></div>
+				<div id="color_legend">
+					<div id="color_image_div">
+						<img id="color_legend_image" src="images/colormap_vert.svg" alt="color_map" style="float:right;">
+					</div>
+					<div id="color_image_text">
+						<div id="color_maximum"><p>Maximum</p></div>
+						<div id="color_minimum"><p>Minimum</p></div>
+					</div>
 				</div>
-			</div>
-		</div>	
+			</div>			
+		</div>
 	</div>
 	
 

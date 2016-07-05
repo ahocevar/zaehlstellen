@@ -97,6 +97,12 @@ function add_zaehlstellen(coords_json)
 				if (amount > max_thisDay) {max_thisDay = amount}; // maximum
 			}
 		}
+		// write values into size-legend
+		document.getElementById("size_image_max").innerHTML = "<p>"+max_thisDay+"</p>"; // biggest circle (d=70px) = maximum value
+		var middle_value = Math.round(max_thisDay/4); // Circle with half diameter (35px) = 1/4 Area
+		document.getElementById("size_image_mid").innerHTML = "<p>"+middle_value+"</p>";
+		var small_value = Math.round(max_thisDay*0.07854); // Circle with 1/7 diameter (10px)
+		document.getElementById("size_image_min").innerHTML = "<p>"+small_value+"</p>";
 
 		ZaehlstellenPoints.setStyle(function(feature, resolution){
 			var geom = feature.getGeometry().getType();  // geom = point
