@@ -82,7 +82,7 @@
 		width: 45%;
 		float: left;
 		line-height: 70px;
-		margin: 10px;
+		margin: 2%;
 		border: 1px;
 		border-style: dashed;
 		border-color: #222222;
@@ -290,7 +290,7 @@
 		background-color: #4A74AA;
 		display: inline-block;
 		border: none;
-		padding: 0px 0px;
+		padding: 2px 2px;
 		text-align: center;
 		font-weight: bold;
 		display: inline-block;
@@ -344,7 +344,7 @@
 	}
 	
 	#legend{
-		height: 130px;
+		height: 190px;
 		position: relative;
 		overflow: hidden;
 		white-space: nowrap;
@@ -356,18 +356,26 @@
 		float: left;
 		bottom: 0;
 		right: 0;
-		width: 30%;
-		height: 130px;
-		margin-left: 20%;
+		width: 40%;
+		height: 190px;
+		margin-left: 10%;
+		margin-right: 0px;
 	}
 	
 	#size_image_div {
 		position: absolute; 
-		top: 25px;
+		float: left;
+		top: 55px;
 		left: 0px;
 		float: left;
 		height: 130px;
-		width: 20px;
+		width: 100%;
+	}
+	
+	#size_legend_text{
+		width: 200px; 
+		margin: 0 auto;
+		font-weight: bold;
 	}
 	
 	#size_image_text{
@@ -375,24 +383,22 @@
 		float: left;
 		width: 100px;
 		height: 130px;
+		left: 130px;
 	}
 	
 	#size_image_max{
 		position: absolute;
-		top: 9px;
-		left: 40px;
+		top: 8px;
 	}
 	
 	#size_image_mid{
 		position: absolute;
 		top: 43px;
-		left: 40px;
 	}
 	
 	#size_image_min{
 		position: absolute;
-		bottom: 21px;
-		left: 40px;
+		bottom: 25px;
 	}
 	
 	#color_legend{
@@ -400,36 +406,32 @@
 		float: right;
 		bottom: 0;
 		right: 0;
-		width: 30%;
-		height: 130px;
-		margin-right: 20%;
-	}
-	#color_image_div{
-		position: absolute;
-		top: 10px;
-		right: 0px;
-		float: right;
-		height: 130px;
-		width: 20px;
+		width: 20%;
+		height: 190px;
+		margin-right: 25%;
+		border-left: 2px dashed #A4C4E8;
 	}
 	
-	#color_image_text{
-		position: relative;
-		float: right;
-		width: 80px;
-		height: 130px;
+	#color_legend_text{
+		width: 200px; 
+		margin: 0 auto;
+		font-weight: bold;
 	}
 	
 	#color_maximum{
-		position: absolute;
-		top: -15px;
-		right: 25px;
+		width: 200px; 
+		margin: 0 auto;
+		margin-top: 10px;
+	}
+	
+	#color_image_div{
+		width: 200px; 
+		margin: 0 auto;
 	}
 	
 	#color_minimum{
-		position: absolute;
-		bottom: -10px;
-		right: 25px;
+		width: 200px; 
+		margin: 0 auto;
 	}
 	
 	
