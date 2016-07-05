@@ -348,6 +348,7 @@
 		position: relative;
 		overflow: hidden;
 		white-space: nowrap;
+		font-size: 12px;
 	}
 	
 	#size_legend{
@@ -378,19 +379,19 @@
 	
 	#size_image_max{
 		position: absolute;
-		top: 0px;
+		top: 9px;
 		left: 40px;
 	}
 	
 	#size_image_mid{
 		position: absolute;
-		top: 37px;
+		top: 43px;
 		left: 40px;
 	}
 	
 	#size_image_min{
 		position: absolute;
-		bottom: 15px;
+		bottom: 21px;
 		left: 40px;
 	}
 	

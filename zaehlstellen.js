@@ -87,8 +87,8 @@ function add_zaehlstellen(coords_json)
 
 	//------- Change Style of Points according to Value of Zählstelle --------->
 	function updateStyle(y){  // y = integer of current day
-		console.log(window.radiustest);
-		window.radiustest = 0;
+		//console.log(window.radiustest);
+		//window.radiustest = 0;
 		// calculate min and max values for current day (for radius)
 		var max_thisDay = -Infinity;
 		for (var k in zaehlstellen_data[y]) { // of for every zaehlstelle
@@ -114,7 +114,7 @@ function add_zaehlstellen(coords_json)
 			var feature_color = 'hsl('+ color_hue +', 99%, 99%)';
 			var radius_size = Math.sqrt((amount/(2*Math.PI)))/Math.sqrt((max_thisDay/(2*Math.PI)))*35;
 
-		if (radius_size > window.radiustest) {window.radiustest = radius_size}; // maximum TEST
+		//if (radius_size > window.radiustest) {window.radiustest = radius_size}; // maximum TEST
 
 
 
@@ -352,6 +352,9 @@ function change_state(obj){
 			select.getFeatures().item(0).setStyle(null)
 			map.removeInteraction(select);
 		};
+		if(typeof(drawingSource) !== "undefined"){
+			drawingSource.clear();
+		}
 		drawingSource = new ol.source.Vector(); // global, unsauber?
 
 		var drawingLayer = new ol.layer.Vector({
