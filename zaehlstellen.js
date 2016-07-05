@@ -2,34 +2,31 @@
 //------------ Funktion initMap() für die Karte--------------------------------------------------------------------- -->
 	var map;
 	var viewpoint;
-	function initMap() {	
+	function initMap() {
 		map = new ol.Map({target: "map"});
-		
+
 		//-------------------  Basemap  -------------------------------
 		var background_grey = new ol.layer.Tile();
 		var xhr = new XMLHttpRequest();
 		xhr.open('GET', 'http://www.basemap.at/wmts/1.0.0/WMTSCapabilities.xml');
 		xhr.onload = function() {
 			var caps = new ol.format.WMTSCapabilities().read(xhr.responseText);
-			var hiDPI = ol.has.DEVICE_PIXEL_RATIO >= 1.5;
 			var options = ol.source.WMTS.optionsFromCapabilities(caps, {
 				layer: 'bmapgrau',
-				//layer: hiDPI ? 'bmaphidpi' : 'geolandbasemap',
 				matrixSet: 'google3857',
 				requestEncoding: 'REST',
-				style: 'normal' 
+				style: 'normal'
 			});
-			options.tilePixelRatio = hiDPI ? 2 : 1;
 			background_grey.setSource(new ol.source.WMTS(options));
 		};
 		xhr.send();
 		background_grey.set('visible', true);
 		background_grey.set('name', 'grau');
 		map.addLayer(background_grey);
-		
-		viewpoint = new ol.View({ center: ol.proj.fromLonLat([14.82719, 47.21595]), zoom: 9 });	
-		map.setView(viewpoint);	
-		
+
+		viewpoint = new ol.View({ center: ol.proj.fromLonLat([14.82719, 47.21595]), zoom: 9 });
+		map.setView(viewpoint);
+
 		// Topographic Layer
 		var background_ortho = new ol.layer.Tile();
 		var xhr_ortho = new XMLHttpRequest();
@@ -41,7 +38,7 @@
 				layer: "bmaporthofoto30cm",
 				matrixSet: 'google3857',
 				requestEncoding: 'REST',
-				style: 'normal' 
+				style: 'normal'
 			});
 			options.tilePixelRatio = hiDPI ? 2 : 1;
 			background_ortho.setSource(new ol.source.WMTS(options));
@@ -54,19 +51,19 @@
 
 
 //---- Zählstellenpunkte für Karte --------------------------------------------------------------------------->
-function add_zaehlstellen(coords_json)	
-{		
+function add_zaehlstellen(coords_json)
+{
 	ZaehlstellenPoints = new ol.layer.Vector({
 		source: new ol.source.Vector({
 			features: (new ol.format.GeoJSON()).readFeatures(coords_json, { featureProjection: 'EPSG:3857' })
 			//url: coords_json,
 			//format: new ol.format.GeoJSON()
 		}),
-		style: function(feature, resolution){ 
+		style: function(feature, resolution){
 			var geom = feature.getGeometry().getType();
-			var zaehlstelle = feature.values_.zaehlstelle; 
+			var zaehlstelle = feature.values_.zaehlstelle;
 			return styles[geom];
-		}	
+		}
 	});
 	var styles = {   // initial style
 		'Point': [new ol.style.Style({
@@ -75,16 +72,16 @@ function add_zaehlstellen(coords_json)
 				fill: new ol.style.Fill({color: 'black'})
 			})
 		})]
-		, 
-	};  
+		,
+	};
 	map.addLayer(ZaehlstellenPoints);
 	ZaehlstellenPoints.set('name', 'zaehlstellen');
 	if (typeof(zaehlstellen_data)!== "undefined"){
-		updateStyle(0); 
+		updateStyle(0);
 		updateInput(0, false, false);
-		document.getElementById("sliderDiv").style.display= 'block';	
-	} 
-		
+		document.getElementById("sliderDiv").style.display= 'block';
+	}
+
 }
 
 
@@ -92,27 +89,27 @@ function add_zaehlstellen(coords_json)
 	function updateStyle(y){  // y = integer of current day
 		console.log(window.radiustest);
 		window.radiustest = 0;
-		// calculate min and max values for current day (for radius)		
+		// calculate min and max values for current day (for radius)
 		var max_thisDay = -Infinity;
-		for (k = 1; k < Object.keys(zaehlstellen_data[y]).length; k++){  // name of zaehlstelle // k = 1 because 0 is date 
-			var amount = Object.values(zaehlstellen_data[y])[k]; // of for every zaehlstelle 	
+		for (k = 1; k < Object.keys(zaehlstellen_data[y]).length; k++){  // name of zaehlstelle // k = 1 because 0 is date
+			var amount = Object.values(zaehlstellen_data[y])[k]; // of for every zaehlstelle
 			if (amount > max_thisDay) {max_thisDay = amount}; // maximum
 		}
-	
+
 		ZaehlstellenPoints.setStyle(function(feature, resolution){
 			var geom = feature.getGeometry().getType();  // geom = point
 			var zaehlstelle = feature.values_.zaehlstelle;  // zaehlstelle = z.B. b0251
 			var amount = zaehlstellen_data[y][zaehlstelle]; // amount = z.B. 1055
-			//example: min_max_zaehlstelle["b02501"][1] = maximum of b02501 of all days  
-			
+			//example: min_max_zaehlstelle["b02501"][1] = maximum of b02501 of all days
+
 			var color_hue = 110 - Math.round((amount/min_max_zaehlstelle[zaehlstelle][1])*110) // 110 = green, 0 = red, between = yellow
 			var feature_color = 'hsl('+ color_hue +', 99%, 99%)';
-			var radius_size = Math.sqrt((amount/(2*Math.PI)))/Math.sqrt((max_thisDay/(2*Math.PI)))*35;  
-			
+			var radius_size = Math.sqrt((amount/(2*Math.PI)))/Math.sqrt((max_thisDay/(2*Math.PI)))*35;
+
 		if (radius_size > window.radiustest) {window.radiustest = radius_size}; // maximum TEST
-			
-			
-			
+
+
+
 			var styles = {
 				'Point': [new ol.style.Style({
 				image: new ol.style.Circle({
@@ -122,85 +119,85 @@ function add_zaehlstellen(coords_json)
 				})
 				})]
 				,
-			};						
+			};
 			return styles[geom];
 		});
-	};					
-	
-	
+	};
+
+
 	//------- Drag and Drop -------------------->
 	// Initiate the Dropzone
 	function init_dropzone(){
 		var dropZone1 = document.getElementById('drop_zone1');
 		dropZone1.addEventListener('dragover', handleDragOver, false);
-		dropZone1.addEventListener('drop', handleFileSelect1, false);	
-		
+		dropZone1.addEventListener('drop', handleFileSelect1, false);
+
 		var dropZone2 = document.getElementById('drop_zone2');
 		dropZone2.addEventListener('dragover', handleDragOver, false);
 		dropZone2.addEventListener('drop', handleFileSelect2, false);
 	}
-	
+
 	//---------- Get File Reference ---------->
 	function handleFileSelect1(evt) {
 		evt.stopPropagation();
 		evt.preventDefault();
-		
+
 		var files = evt.dataTransfer.files; // FileList object.
-		
+
 		// files is a FileList of File objects. List some properties.
 		var output = [];
 		f = files[0];
 		output.push('<li><strong>', escape(f.name), '</strong>  - ',
 		f.size, ' bytes, last modified: ',
 		f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a','</li>');
-		
+
 		var reader = new FileReader(); // to read the FileList object
-		reader.onload = function(event){  // Reader ist asynchron, wenn reader mit operation fertig ist, soll das hier (JSON.parse) ausgeführt werden, sonst ist es noch null				
-			var coords_json = JSON.parse(reader.result);  
+		reader.onload = function(event){  // Reader ist asynchron, wenn reader mit operation fertig ist, soll das hier (JSON.parse) ausgeführt werden, sonst ist es noch null
+			var coords_json = JSON.parse(reader.result);
 			add_zaehlstellen(coords_json);
 		};
-		reader.readAsText(f);	
-		
-		document.getElementById('list_coords').innerHTML = '<ul>' + output.join('') + '</ul>';	
+		reader.readAsText(f);
+
+		document.getElementById('list_coords').innerHTML = '<ul>' + output.join('') + '</ul>';
 	}
-	
+
 	function handleFileSelect2(evt) {
 		evt.stopPropagation();
 		evt.preventDefault();
-		
+
 		var files = evt.dataTransfer.files; // FileList object.
-		
+
 		// files is a FileList of File objects. List some properties.
 		var output = [];
 		f = files[0];
 		output.push('<li><strong>', escape(f.name), '</strong>  - ',
 		f.size, ' bytes, last modified: ',
 		f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a','</li>');
-		
+
 		var reader = new FileReader(); // to read the FileList object
-		reader.onload = function(event){  // Reader ist asynchron, wenn reader mit operation fertig ist, soll das hier (JSON.parse) ausgeführt werden, sonst ist es noch null				
+		reader.onload = function(event){  // Reader ist asynchron, wenn reader mit operation fertig ist, soll das hier (JSON.parse) ausgeführt werden, sonst ist es noch null
 			zaehlstellen_data = JSON.parse(reader.result);  // global, unsauber?
-			makeDateObjects(zaehlstellen_data);	
+			makeDateObjects(zaehlstellen_data);
 			selectedWeekdays = [0,1,2,3,4,5,6]; // select all weekdays before timeslider gets initialized
 			init_timeslider(zaehlstellen_data);
 			find_dataRange(zaehlstellen_data);
-			
-			map.getLayers().forEach(function(layer) { 
-				if (layer.get('name') == 'zaehlstellen') { 
-				  updateStyle(0); 
+
+			map.getLayers().forEach(function(layer) {
+				if (layer.get('name') == 'zaehlstellen') {
+				  updateStyle(0);
 				  updateInput(0, false, false);
-				  document.getElementById("sliderDiv").style.display= 'block';	
+				  document.getElementById("sliderDiv").style.display= 'block';
 				}
 			});
 		};
-		reader.readAsText(f);	
-		
+		reader.readAsText(f);
+
 		// global variable for selection
 		oldSelectedStreetNames = [] // Array for street names, if same amount of points are selected, but different streetnames -> redraw chart completely
-		document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';	
+		document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
 	}
-	
-	
+
+
 	//---------- Drag Over ------------------->
 	function handleDragOver(evt) {
 		evt.stopPropagation();
@@ -210,7 +207,7 @@ function add_zaehlstellen(coords_json)
 	//---------- Fill Timeslider with min and max Values ---------->
 	function init_timeslider(data){
 		var minDatum = data[0].datum;
-		var maxDatum = data[data.length-1].datum;		
+		var maxDatum = data[data.length-1].datum;
 		document.getElementById("time_slider").setAttribute("max", data.length-1);
 	}
 	//---------- Button one step left/right ---------->
@@ -221,32 +218,32 @@ function add_zaehlstellen(coords_json)
 		updateInput(thisDate, goLeft, loop);
 	}
 	//---------- Find min and max Data Values for Visualization ---------->
-	function find_dataRange(data){	
+	function find_dataRange(data){
 		min_max_zaehlstelle ={};
-		for (k = 1; k < Object.keys(data[0]).length; k++){  // name of zaehlstelle 
+		for (k = 1; k < Object.keys(data[0]).length; k++){  // name of zaehlstelle
 			var name_zaehlstelle = Object.keys(zaehlstellen_data[0])[k];
 			var min_max = [Infinity, -Infinity];
-			
+
 			for (i = 1; i < data.length; i++){  // also via keys? // value of zaehlstelle at certain date
 				var amount = data[i][name_zaehlstelle];
-				
-				if (amount < min_max[0]) {min_max[0] = amount}; 
+
+				if (amount < min_max[0]) {min_max[0] = amount};
 				if (amount > min_max[1]) {min_max[1] = amount};
-				
+
 			}
 			min_max_zaehlstelle[name_zaehlstelle] = min_max; // assign min/max-Values to Object
-		}	
+		}
 	}
 	//--------- Parse Date-Strings into JS Date Objects -------------------->
 	function makeDateObjects(data){
 		for (i = 0; i < data.length; i++){
-			var datestring = data[i].datum	
+			var datestring = data[i].datum
 			var thisYear   = parseInt(datestring.substring(0,4));
 			var thisMonth  = parseInt(datestring.substring(5,7));
 			var thisDay   = parseInt(datestring.substring(8,10));
 			var thisDateComplete = new Date(thisYear, thisMonth-1, thisDay);  // JS-Date Month begins at 0
 			zaehlstellen_data[i].datum = thisDateComplete;
-		}		
+		}
 	}
 //-------- Function for Checkboxes of Weekday-Selection (visuals) ------------>
 function change_state(obj){
@@ -264,15 +261,15 @@ function change_state(obj){
 			selectedWeekdays.push(parseInt(document.getElementsByClassName("input-check checked")[i].childNodes[0].value));
 		}
     }
-	
+
 	//  Update of Shown Value   -->
 	function updateInput(thisDate, goLeft, loop) { // go left: true if going left. loop: true to start at 0 when max x time is reached
 		// Create Arrays for Printing the Date
 		var d_names = new Array("Sunday", "Monday", "Tuesday",
 		"Wednesday", "Thursday", "Friday", "Saturday");
 
-		var m_names = new Array("January", "February", "March", 
-		"April", "May", "June", "July", "August", "September", 
+		var m_names = new Array("January", "February", "March",
+		"April", "May", "June", "July", "August", "September",
 		"October", "November", "December");
 
 		//check if day of week is selected
@@ -280,20 +277,20 @@ function change_state(obj){
 		// repeat until selected weekday is found
 		while (foundNextWeekday == false){
 			thisDate = parseInt(thisDate);
-			
+
 			if(thisDate >= zaehlstellen_data.length-1){ // if maximum time is reached
 				if (loop === true){
 					thisDate = 0;
 				}
 				else{
 					break;
-				}	 
+				}
 			};
-			
+
 			if (thisDate < 0){
 				break;
 			};
-			
+
 			var d = zaehlstellen_data[thisDate].datum;
 			if (typeof(selectedWeekdays) != "undefined" && selectedWeekdays.indexOf(d.getDay()) >= 0){
 				var curr_day = d.getDay();
@@ -318,15 +315,15 @@ function change_state(obj){
 				var curr_month = d.getMonth();
 				var curr_year = d.getFullYear();
 				var shownDate = d_names[curr_day] + ", "+ m_names[curr_month] + " " + curr_date + "<SUP>" + sup + "</SUP>" + ", "  + curr_year;
-				
-				document.getElementById('currentDate').innerHTML = shownDate; 		
-				
+
+				document.getElementById('currentDate').innerHTML = shownDate;
+
 				updateStyle(thisDate);
 				foundNextWeekday = true;
 				document.getElementById("time_slider").value = thisDate; // Update of Timeslider
 				if (typeof selectedFeatures !== "undefined"  && selectedFeatures.length > 0){createPolyChart(selectedFeatures)}
 			}
-			else if (selectedWeekdays.length == 0){ 
+			else if (selectedWeekdays.length == 0){
 				alert("No Weekday Selected");
 				break;
 				foundNextWeekday = true;
@@ -336,20 +333,20 @@ function change_state(obj){
 			}
 		}
 	}
-	
-	
-	
+
+
+
 //--------------------- Select By Polygon (copypasta) ---------------->
 	var draw; // global so we can remove it later
 	function SelectByPolygon(){
 		// remove point selection
 		if (typeof(select) !== "undefined") {
-			select.getFeatures().item(0).setStyle(null)	
+			select.getFeatures().item(0).setStyle(null)
 			map.removeInteraction(select);
 		};
 		drawingSource = new ol.source.Vector(); // global, unsauber?
 
-		var drawingLayer = new ol.layer.Vector({ 
+		var drawingLayer = new ol.layer.Vector({
 				source: drawingSource,
 				style: new ol.style.Style({
 				fill: new ol.style.Fill({
@@ -367,34 +364,34 @@ function change_state(obj){
 					})
 				})
 			});
-		map.addLayer(drawingLayer);	
-			
+		map.addLayer(drawingLayer);
+
 		draw = new ol.interaction.Draw({
 			  source: drawingSource,
 			  type: 'Polygon'
 			  //geometryFunction: geometryFunction,  //Function that is called when a geometry's coordinates are updated.
 			});
-				
+
 		draw.on('drawstart', function(e) {
 			drawingSource.clear();
 			});
-		
+
 		draw.on('drawend', function(e){
 				var polygonGeometry = e.feature.getGeometry();
 				selectedFeatures = []; // Array for Point Features  // global because used when timeslider changes, not safe?
 				oldSelectedStreetNames = [] // Array for street names, if same amount of points are selected, but different streetnames -> redraw chart completely
-				
+
 				for (i = 0; i < ZaehlstellenPoints.getSource().getFeatures().length; i++){ // for every Point (zaehlstelle)...
 					var pointExtent = ZaehlstellenPoints.getSource().getFeatures()[i].getGeometry().getExtent();
 					if (polygonGeometry.intersectsExtent(pointExtent)==true){ //returns true when Polygon intersects with Extent of Point (= Point itself)
 						selectedFeatures.push(ZaehlstellenPoints.getSource().getFeatures()[i]);
-					}   
-				}	
+					}
+				}
 				createPolyChart(selectedFeatures);
 			});
 	map.addInteraction(draw);
 	}
-	
+
 //------------------------ Create Charts ---------------------------->
 function createPolyChart(selectedFeatures){
 	// Get Sreet Names
@@ -402,8 +399,8 @@ function createPolyChart(selectedFeatures){
 		for (i = 0; i < selectedFeatures.length; i++){
 			selectedStreetNames.push(selectedFeatures[i].getProperties().zaehlstelle);  // get all streetnames (= zaehlstellen) from selection
 		};
-	
-	
+
+
 	// Get corresponding Data
 	var time = document.getElementById("time_slider").value;
 	var currentData = zaehlstellen_data[time]; // zaehlstellen-Data from all the Features at current time
@@ -411,20 +408,20 @@ function createPolyChart(selectedFeatures){
 		for (i = 0; i < selectedStreetNames.length; i++){
 			selectedData.push(currentData[selectedStreetNames[i]]); // Data from selected Streets
 		};
-		
+
 	// get maximum of selected features at all times (to set maximum of scale)
 	var dataMax = 0;
 	for (var i = 0; i < selectedStreetNames.length; i++) {
 		if (min_max_zaehlstelle[selectedStreetNames[i]][1] > dataMax){dataMax = min_max_zaehlstelle[selectedStreetNames[i]][1];}; // if maximum value of selected zaehlstelle is bigger than current maximum value, replace it
 	}
 	dataMax = Math.ceil(dataMax/1000)*1000; // round up to next 1000
-	
-	
+
+
 
 	// Make Multi-Feature Chart
 	// Destroy existing Chart if number of selected Elements differs
 	var chartDestroyed = false;
-	
+
 	// JS Magic for comparing scalar arrays
 	//var SameStreetNames = selectedStreetNames.length!==oldSelectedStreetNames.length && selectedStreetNames.every(function(v,i) { return v === oldSelectedStreetNames[i]});
 	var SameStreetNames = selectedStreetNames.equals(oldSelectedStreetNames);
@@ -434,10 +431,10 @@ function createPolyChart(selectedFeatures){
 		}
 	// overwrite the old selected Street Names, so if e.g. 1 point is selected both times, but its a different point, the chart is getting destroyed and remade
 	oldSelectedStreetNames = selectedStreetNames.slice() // global, not referenced
-	
+
 	// hide snapshot button if no point is selected (chart is invisible anyways, because no redraw)
 	if (selectedFeatures.length === 0){document.getElementById("snapshot_button").style.display="none";};
-	
+
 	// if Chart already exists, update it with new values and labels (e.g. only time changed)
 	if (myChart.id !== "myChart" && chartDestroyed == false && selectedFeatures.length !== 0){
 		//alert ("update");
@@ -447,7 +444,7 @@ function createPolyChart(selectedFeatures){
 		myChart.render();
 		myChart.resize();
 	}
-	
+
 	else if (selectedFeatures.length !== 0){	 // If Chart didnt exist before...
 		var ctx = document.getElementById("myChart");
 			myChart = new Chart(ctx, {  // global, unsauber?
@@ -489,21 +486,21 @@ function snapshot(){
 	// create empty snapshot array
 	if (typeof(snapshotArray) == "undefined"){
 			snapshotArray = [];
-	};  
-	
+	};
+
 	// create array with parameters of this snapshot
 	var thisSnapshot = [];
 	thisSnapshot[0] = parseInt(document.getElementById("time_slider").value); // Save Current date
 	thisSnapshot[1] = selectedFeatures; // Save Current Selected Features
-	snapshotArray.push(thisSnapshot);	
-	
+	snapshotArray.push(thisSnapshot);
+
 	// append row to the HTML table
 	var tbl = document.getElementById('snapshot_table') // table reference
     var row = tbl.insertRow(tbl.rows.length)      // append table row
     var eyeButtonCell = row.insertCell(0);
 	//var snapshotNameCell = row.insertCell(1);
 	//var deleteRowButtonCell = row.insertCell(2);
-	
+
 	var buttonText = "Snapshot " + tbl.rows.length;
 	// create button with value of index of array (of this snapshot)
 	var btn = document.createElement('input');
@@ -513,16 +510,16 @@ function snapshot(){
 	btn.value = buttonText;
 	btn.setAttribute('snapshotIndex', tbl.rows.length);
 	btn.onclick = function () {showSnapshot(this.getAttribute('snapshotIndex')-1);};
- 	
-	eyeButtonCell.appendChild(btn); 
-	
+
+	eyeButtonCell.appendChild(btn);
+
 	document.getElementById("snapshot_div").style.visibility='visible';
-	
+
 };
 
 function showSnapshot(snapshotIndex){
 	updateInput(snapshotArray[snapshotIndex][0], false, false);
-	createPolyChart(snapshotArray[snapshotIndex][1]);	
+	createPolyChart(snapshotArray[snapshotIndex][1]);
 };
 
 function deleteSnapshots(){
@@ -533,44 +530,44 @@ function deleteSnapshots(){
     for (i = lastRow; i >= 0; i--) {
         tbl.deleteRow(i);
     }
-snapshotArray = [];	
+snapshotArray = [];
 document.getElementById("snapshot_div").style.visibility = "hidden";
 }
 
-function noBackground(){	
-	map.getLayers().forEach(function(layer) { 
-		if (layer.get('name') == 'grau') { 
-		  layer.setVisible(false); 
+function noBackground(){
+	map.getLayers().forEach(function(layer) {
+		if (layer.get('name') == 'grau') {
+		  layer.setVisible(false);
 		}
-		if (layer.get('name') == 'ortho') { 
-		  layer.setVisible(false); 
+		if (layer.get('name') == 'ortho') {
+		  layer.setVisible(false);
 		}
-	}); 
+	});
 }
 
 function viewBasemap(){
-	map.getLayers().forEach(function(layer) { 
-		if (layer.get('name') == 'grau') { 
-		  layer.setVisible(true); 
+	map.getLayers().forEach(function(layer) {
+		if (layer.get('name') == 'grau') {
+		  layer.setVisible(true);
 		}
-		if (layer.get('name') == 'ortho') { 
-		  layer.setVisible(false); 
+		if (layer.get('name') == 'ortho') {
+		  layer.setVisible(false);
 		}
-	}); 
+	});
 }
 
 function viewAerial(){
-	map.getLayers().forEach(function(layer) { 
-		if (layer.get('name') == 'grau') { 
-		  layer.setVisible(false); 
+	map.getLayers().forEach(function(layer) {
+		if (layer.get('name') == 'grau') {
+		  layer.setVisible(false);
 		}
-		if (layer.get('name') == 'ortho') { 
-		  layer.setVisible(true); 
+		if (layer.get('name') == 'ortho') {
+		  layer.setVisible(true);
 		}
-	}); 
+	});
 }
-	
-	
+
+
 /////////  TEST changing array protoype to compare (arr1.equals(arr2)) arrays, not part of a function?
 Array.prototype.equals = function (array, strict) {
     if (!array)
@@ -606,7 +603,7 @@ function SelectSinglePoint(){
 	};
 	select = new ol.interaction.Select(); // Interaktion
 	map.addInteraction(select); // Interaktion der Karte hinzufügen
-	
+
 	// single point selection
 	var oldStyle;
 	select.on('select', function(e) {
@@ -614,21 +611,21 @@ function SelectSinglePoint(){
 			var features = select.getFeatures(); // Feature Array
 			var feature = features.item(0); //  first element
 			var y = parseInt(document.getElementById("time_slider").value);
-			
+
 			var selected = e.selected;
 			var deselected = e.deselected;
-		
+
 			if (selected.length) {
-				selected.forEach(function(feature){	
+				selected.forEach(function(feature){
 					var zaehlstelle = feature.values_.zaehlstelle;  // zaehlstelle = z.B. b0251
 					var amount = zaehlstellen_data[y][zaehlstelle]; // amount = z.B. 1055
 					//example: min_max_zaehlstelle["b02501"][1] = maximum of b02501
-					
+
 					//style when selected
 					var color_hue = 110 - Math.round((amount/min_max_zaehlstelle[zaehlstelle][1])*110) // 110 = green, 0 = red, between = yellow
 					var feature_color = 'hsl('+ color_hue +', 99%, 99%)';
-					
-					var radius_size = (Math.round((amount/min_max_zaehlstelle[zaehlstelle][1]))+1)*10;  
+
+					var radius_size = (Math.round((amount/min_max_zaehlstelle[zaehlstelle][1]))+1)*10;
 					oldStyle = feature.getStyle();
 					var style_modify = new ol.style.Style({
 							image: new ol.style.Circle({
@@ -639,33 +636,33 @@ function SelectSinglePoint(){
 					});
 					feature.setStyle(style_modify);
 					});
-				} 
+				}
 			if (deselected.length){
 				deselected.forEach(function(feature){
 					feature.setStyle(null);
 				});
-			}	
+			}
 
 			selectedFeatures = selected.length ? [feature] : []	;
 			createPolyChart(selectedFeatures);
-		} 
-	});	
-	
+		}
+	});
+
 	// changing cursor when over Feature
 	// map.on("pointermove", function (evt) {
         // var hit = this.forEachFeatureAtPixel(evt.pixel,
 			// function(feature, layer) {
 			// return true;
-				// }); 
+				// });
 			// if (hit) {
 				// this.getTarget().style.cursor = 'pointer';
 				// } else {
 			// this.getTarget().style.cursor = '';
-			// }	   
+			// }
 	// });
-};	
+};
 
-// functon for changing Time every second 
+// functon for changing Time every second
 function autoPlay(){
 		if (typeof(interval_handle) == "undefined"){
 				interval_handle = setInterval(function(){
@@ -679,6 +676,3 @@ function autoPlay(){
 			document.getElementById("auto_play_button").innerHTML = "Auto-Play &#9658";
 		}
 };
-
-
-
