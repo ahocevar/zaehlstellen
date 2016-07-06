@@ -33,14 +33,12 @@
 		xhr_ortho.open('GET', 'http://www.basemap.at/wmts/1.0.0/WMTSCapabilities.xml');
 		xhr_ortho.onload = function() {
 			var caps = new ol.format.WMTSCapabilities().read(xhr_ortho.responseText);
-			var hiDPI = ol.has.DEVICE_PIXEL_RATIO >= 1.5;
 			var options = ol.source.WMTS.optionsFromCapabilities(caps, {
 				layer: "bmaporthofoto30cm",
 				matrixSet: 'google3857',
 				requestEncoding: 'REST',
 				style: 'normal'
 			});
-			options.tilePixelRatio = hiDPI ? 2 : 1;
 			background_ortho.setSource(new ol.source.WMTS(options));
 		};
 		xhr_ortho.send();
