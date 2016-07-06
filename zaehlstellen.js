@@ -98,11 +98,11 @@ function add_zaehlstellen(coords_json)
 			}
 		}
 		// write values into size-legend
-		document.getElementById("size_image_max").innerHTML = "<p>"+max_thisDay+"</p>"; // biggest circle (d=70px) = maximum value
+		document.getElementById("size_image_max").innerHTML = max_thisDay; // biggest circle (d=70px) = maximum value
 		var middle_value = Math.round(max_thisDay/4); // Circle with half diameter (35px) = 1/4 Area
-		document.getElementById("size_image_mid").innerHTML = "<p>"+middle_value+"</p>";
+		document.getElementById("size_image_mid").innerHTML = middle_value;
 		var small_value = Math.round(max_thisDay*0.07854); // Circle with 1/7 diameter (10px)
-		document.getElementById("size_image_min").innerHTML = "<p>"+small_value+"</p>";
+		document.getElementById("size_image_min").innerHTML = small_value;
 
 		ZaehlstellenPoints.setStyle(function(feature, resolution){
 			var geom = feature.getGeometry().getType();  // geom = point
