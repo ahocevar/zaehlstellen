@@ -5,8 +5,24 @@
 	function initMap() {
 		map = new ol.Map({target: "map"});
 
+		viewpoint = new ol.View({ center: ol.proj.fromLonLat([14.82719, 47.21595]), zoom: 9 });
+		map.setView(viewpoint);
+
 		//-------------------  Basemap  -------------------------------
 		var background_grey = new ol.layer.Tile();
+		background_grey.set('visible', true);
+		background_grey.set('name', 'grau');
+		map.addLayer(background_grey);
+
+		// Topographic Layer
+		var background_ortho = new ol.layer.Group();
+		background_ortho.set('visible', false);
+		background_ortho.set('name', 'ortho');
+		var background_img = new ol.layer.Tile();
+		var background_labels = new ol.layer.Tile();
+		background_ortho.setLayers(new ol.Collection([background_img, background_labels]));
+		map.addLayer(background_ortho);
+
 		var xhr = new XMLHttpRequest();
 		xhr.open('GET', 'http://www.basemap.at/wmts/1.0.0/WMTSCapabilities.xml');
 		xhr.onload = function() {
@@ -18,33 +34,22 @@
 				style: 'normal'
 			});
 			background_grey.setSource(new ol.source.WMTS(options));
-		};
-		xhr.send();
-		background_grey.set('visible', true);
-		background_grey.set('name', 'grau');
-		map.addLayer(background_grey);
-
-		viewpoint = new ol.View({ center: ol.proj.fromLonLat([14.82719, 47.21595]), zoom: 9 });
-		map.setView(viewpoint);
-
-		// Topographic Layer
-		var background_ortho = new ol.layer.Tile();
-		var xhr_ortho = new XMLHttpRequest();
-		xhr_ortho.open('GET', 'http://www.basemap.at/wmts/1.0.0/WMTSCapabilities.xml');
-		xhr_ortho.onload = function() {
-			var caps = new ol.format.WMTSCapabilities().read(xhr_ortho.responseText);
-			var options = ol.source.WMTS.optionsFromCapabilities(caps, {
+			options = ol.source.WMTS.optionsFromCapabilities(caps, {
 				layer: "bmaporthofoto30cm",
 				matrixSet: 'google3857',
 				requestEncoding: 'REST',
 				style: 'normal'
 			});
-			background_ortho.setSource(new ol.source.WMTS(options));
+			background_img.setSource(new ol.source.WMTS(options));
+			options = ol.source.WMTS.optionsFromCapabilities(caps, {
+				layer: "bmapoverlay",
+				matrixSet: 'google3857',
+				requestEncoding: 'REST',
+				style: 'normal'
+			});
+			background_labels.setSource(new ol.source.WMTS(options))
 		};
-		xhr_ortho.send();
-		background_ortho.set('visible', false);
-		background_ortho.set('name', 'ortho');
-		map.addLayer(background_ortho);
+		xhr.send();
 	}
 
 
