@@ -35,13 +35,13 @@
 		</div>
 		<div id ="sliderDiv" style="display: none"> <!-- invisible at first -->
 			<div id="weekday_div">
-					<label class="input-check checked"><input onclick="change_state(this)" type="checkbox" value="1" name="weekday"/> Mon </label>
-					<label class="input-check checked"><input onclick="change_state(this)" type="checkbox" value="2" name="weekday"/> Tue </label>
-					<label class="input-check checked"><input onclick="change_state(this)" type="checkbox" value="3" name="weekday"/> Wed </label>
-					<label class="input-check checked"><input onclick="change_state(this)" type="checkbox" value="4" name="weekday"/> Thu </label>
-					<label class="input-check checked"><input onclick="change_state(this)" type="checkbox" value="5" name="weekday"/> Fri </label>
-					<label class="input-check checked"><input onclick="change_state(this)" type="checkbox" value="6" name="weekday"/> Sat </label>
-					<label class="input-check checked"><input onclick="change_state(this)" type="checkbox" value="0" name="weekday"/> Sun </label>
+					<input checked id="mon" onclick="change_state(this)" type="checkbox" value="1" name="weekday"/><label for="mon" class="input-check"> Mon </label>
+					<input checked id="tue" onclick="change_state(this)" type="checkbox" value="2" name="weekday"/><label for="tue" class="input-check"> Tue </label>
+					<input checked id="wed" onclick="change_state(this)" type="checkbox" value="3" name="weekday"/><label for="wed" class="input-check"> Wed </label>
+					<input checked id="thu" onclick="change_state(this)" type="checkbox" value="4" name="weekday"/><label for="thu" class="input-check"> Thu </label>
+					<input checked id="fri" onclick="change_state(this)" type="checkbox" value="5" name="weekday"/><label for="fri" class="input-check"> Fri </label>
+					<input checked id="sat" onclick="change_state(this)" type="checkbox" value="6" name="weekday"/><label for="sat" class="input-check"> Sat </label>
+					<input checked id="sun" onclick="change_state(this)" type="checkbox" value="0" name="weekday"/><label for="sun" class="input-check"> Sun </label>
 			</div>
 			<div id="popup">
 			</div>

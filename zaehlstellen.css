@@ -105,6 +105,9 @@
 		margin-bottom: 15px;
 	}
 	/* Checkoboxes for selecting Weekday */
+	#weekday_div input {
+		display: none;
+	}
 	.input-check{
 		display:inline-block;
 		height:20px;
@@ -131,7 +134,7 @@
 
 
 	/* This is the style for a checked "button" */
-	.input-check.checked{
+	input:checked + .input-check {
 		display:inline-block;
 		background:#4A74AA;
 		color:white;

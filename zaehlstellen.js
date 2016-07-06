@@ -253,20 +253,12 @@ function add_zaehlstellen(coords_json)
 	}
 //-------- Function for Checkboxes of Weekday-Selection (visuals) ------------>
 function change_state(obj){
-        if (obj.checked){
-            //if checkbox is being checked, add a "checked" class
-            obj.parentNode.classList.add("checked");
-        }
-        else{
-            //else remove it
-            obj.parentNode.classList.remove("checked");
-        }
-		// update weekday-selection with new selected weekdays
 		selectedWeekdays = [];
-		for (i = 0; i < document.getElementsByClassName("input-check checked").length; i++){
-			selectedWeekdays.push(parseInt(document.getElementsByClassName("input-check checked")[i].childNodes[0].value));
+		var weekdays = document.querySelectorAll('input[name=weekday]:checked');
+		for (i = 0; i < weekdays.length; i++){
+			selectedWeekdays.push(parseInt(weekdays[i].value));
 		}
-    }
+  }
 
 	//  Update of Shown Value   -->
 	function updateInput(thisDate, goLeft, loop) { // go left: true if going left. loop: true to start at 0 when max x time is reached
