@@ -101,6 +101,7 @@
 	}
 
 	#weekday_div {
+		white-space: nowrap;
 		margin-top: 20px;
 		margin-bottom: 15px;
 	}
