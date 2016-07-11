@@ -64,7 +64,7 @@ function add_zaehlstellen(coords_json)
 		}),
 		style: function(feature, resolution){
 			var geom = feature.getGeometry().getType();
-			var zaehlstelle = feature.values_.zaehlstelle;
+			var zaehlstelle = feature.get('zaehlstelle');
 			return styles[geom];
 		}
 	});
@@ -109,7 +109,7 @@ function add_zaehlstellen(coords_json)
 
 		ZaehlstellenPoints.setStyle(function(feature, resolution){
 			var geom = feature.getGeometry().getType();  // geom = point
-			var zaehlstelle = feature.values_.zaehlstelle;  // zaehlstelle = z.B. b0251
+			var zaehlstelle = feature.get('zaehlstelle');  // zaehlstelle = z.B. b0251
 			var amount = zaehlstellen_data[y][zaehlstelle]; // amount = z.B. 1055
 			//example: min_max_zaehlstelle["b02501"][1] = maximum of b02501 of all days
 
@@ -623,7 +623,7 @@ function SelectSinglePoint(){
 
 			if (selected.length) {
 				selected.forEach(function(feature){
-					var zaehlstelle = feature.values_.zaehlstelle;  // zaehlstelle = z.B. b0251
+					var zaehlstelle = feature.get('zaehlstelle');  // zaehlstelle = z.B. b0251
 					var amount = zaehlstellen_data[y][zaehlstelle]; // amount = z.B. 1055
 					//example: min_max_zaehlstelle["b02501"][1] = maximum of b02501
 
