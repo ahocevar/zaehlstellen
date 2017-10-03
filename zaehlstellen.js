@@ -24,7 +24,7 @@
 		map.addLayer(background_ortho);
 
 		var xhr = new XMLHttpRequest();
-		xhr.open('GET', 'http://www.basemap.at/wmts/1.0.0/WMTSCapabilities.xml');
+		xhr.open('GET', 'https://www.basemap.at/wmts/1.0.0/WMTSCapabilities.xml');
 		xhr.onload = function() {
 			var caps = new ol.format.WMTSCapabilities().read(xhr.responseText);
 			var options = ol.source.WMTS.optionsFromCapabilities(caps, {
